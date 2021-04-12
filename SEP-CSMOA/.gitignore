@@ -1,0 +1,10 @@
+*.class
+*.DS_Store
+*.txt
+*.log
+*.prefs
+*.csv
+/bin/
+/.classpath
+/.project
+/.settings
