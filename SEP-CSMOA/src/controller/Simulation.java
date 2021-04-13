@@ -297,13 +297,17 @@ public class Simulation {
 		JsonArray legs = routes.get(0).getAsJsonObject().getAsJsonArray("legs");
 		// Gets Summary object from the legs array
 		JsonElement summary = ((JsonObject) legs.get(0)).get("summary");
-
+		String points = ((JsonObject) legs.get(0)).get("points").toString();
+		
 		System.out.println("routes array from JSON");
 		System.out.println(routes.toString());
 		System.out.println("legs array from JSON");
 		System.out.println(legs.toString());
 		System.out.println("summary obj from legs");
 		System.out.println(summary.toString());
+		System.out.println("Lat/Long Points");
+		System.out.println(points);
+		
 
 		s.runSimulation();
 
