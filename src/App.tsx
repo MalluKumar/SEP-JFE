@@ -1,40 +1,52 @@
-import React, {useEffect} from 'react';
-import './App.css';
-import {MapContainer, TileLayer, Circle, Marker, Popup} from 'react-leaflet'
 import * as d3 from "d3";
-// import data from './data.csv';
+import React, { useEffect, useState } from 'react';
+import './App.css';
+import { JobData } from './consts';
+import JobMap from './Map';
 
 const App = () => {
     // react hooks 
-    const [middlePoints, setMiddlePoints] = React.useState(null);
-    const [first, setFirst] = React.useState(null);
-    const [last, setLast] = React.useState(null);
-    const [date, setDate] = React.useState(null);
-    const [time, setTime] = React.useState(null);
+    const [jobData, setJobData] = useState<JobData[]>([]);
+    const [dateTime, setDateTime] = useState<Date>(new Date("2019-01-01")); //TODO: null this out and set in read the data in the lifecycle hook
+
+    function castData(rawData: any[]) {
+        let jobList: JobData[] = [];
+        rawData.forEach(item => {
+            if (item["B-GST ID"]) { // Ignore the stats and other stuff. Probably put them in another data struct somewhere
+                let currentJob: JobData = {
+                    JobID: item["A-JOB ID"],
+                    GSTID: item["B-GST ID"],
+                    Address: item["C-ADDRESS"],
+                    Suburb: item["D-SUBURB"],
+                    Postcode: item["E-POSTCODE"],
+                    StartTime: item["F-START DATE TIME"],
+                    IdleDuration: item["G-IDLE TIME MINS"],
+                    TravelDuration: item["H-TRAVEL TIME MINS"],
+                    JobDuration: item["I-JOB DURATION MINS"],
+                    EndTime: item["J-END DATE TIME"],
+                    DistanceTravelled: item["K-DISTANCE IN METERS"],
+                    Path: JSON.parse(item["L-POINTS IN TRIP"])
+                }
+                jobList.push(currentJob)
+            }
+        });
+
+        // Grab the first date, probably rewrite this or sort the array depending on your needs
+        var lowest: Date = new Date("2000-01-01");  //Do as I say, not as I do
+        var tmp;
+        for (var i = jobList.length - 1; i >= 0; i--) {
+            tmp = jobList[i].StartTime;
+            if (tmp < lowest) lowest = tmp;
+        }
+        setDateTime(lowest);
+
+        setJobData(jobList)
+    }
 
     useEffect(() => {
-// d3 for reading csv
+        // d3 for reading csv
         d3.csv(`${process.env.PUBLIC_URL}/data.csv`).then(function (data: any): void {
-            // get date and time from csv
-            const dateAndTime = data[0]['F-START DATE TIME'];
-            // get lat lng data from csv
-            const LatLngData = JSON.parse(data[0]['L-POINTS IN TRIP']);
-            // make length variable of lat lng data.
-            const n = LatLngData.length;
-            // split and set date
-            setDate(dateAndTime.split('T')[0])
-            // split and set time
-            setTime(dateAndTime.split('T')[1])
-            // set starting marker data
-            setFirst(LatLngData[0]);
-            // set last marker data
-            setLast(LatLngData[n - 1]);
-            // remove first and last elemet from existing data
-            LatLngData.shift();  // Removes the first element from an array and returns only that element.
-            LatLngData.pop();
-            // set middle point/circles data
-            setMiddlePoints(LatLngData);
-            // console.log(n, LatLngData);
+            castData(data);
         }).catch(function (err) {
             throw err;
         })
@@ -42,31 +54,10 @@ const App = () => {
     }, []);
 
     return (
-        <MapContainer id="container" center={[-33.900, 151.150]} zoom={15} scrollWheelZoom={true}>
-            <p style={{position: 'absolute', top: 5, right: 5, zIndex: 1000, fontSize: 16, fontWeight: "bold"}}>{`Date: ${date}, Time: ${time}`}</p>
-            <TileLayer
-                attribution='&copy; <a href="&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"/>
-            {/*// @ts-ignore*/}
-            {/* frist marker */}
-            {first && <Marker position={[first.latitude, first.longitude]}></Marker>}
-            {/*// @ts-ignore*/}
-            {/* middle points circles */}
-            {middlePoints && middlePoints.map(function (e: any) {
-                // return
-                return <Circle
-                    center={{lat: e.latitude, lng: e.longitude}}
-                    fillColor="red"
-                    fillOpacity={1}
-                    color={"red"}
-                    opacity={1}
-                    radius={5}/>
-            })
-            }
-            {/*// @ts-ignore*/}
-            {/* last marker */}
-            {last && <Marker position={[last.latitude, last.longitude]}></Marker>}
-        </MapContainer>
+        <div>
+            <JobMap currentDateTime={dateTime} jobs={jobData} />
+            <button onClick={(e) => { console.log(jobData) }} >Show State Data </button>
+        </div>
     );
 }
 
