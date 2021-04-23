@@ -1,5 +1,5 @@
 import React, { Component, useEffect } from "react";
-import {LatLngTuple} from "leaflet";
+import L, {LatLngTuple} from "leaflet";
 import { Marker, useMap } from "react-leaflet";
 //@ts-ignore
 import {antPath} from 'leaflet-ant-path';
@@ -29,8 +29,11 @@ function DirectionsRoute(props: any) {
     },[coords]);
 
     const position: LatLngTuple = coords[coords.length-1];
-
-    return <Marker position={position}></Marker>;
+    const myIcon = L.icon({
+        iconUrl: "icon_33997.svg",
+        // iconAnchor: pinAnchor
+    });
+    return <Marker draggable={true} position={position}></Marker>;
 }
 
 

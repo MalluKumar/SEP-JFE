@@ -69,7 +69,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                     job.Path.forEach(row => {
                         directionArray.push([row.latitude, row.longitude])
                     });
-                    return <><DirectionsRoute coords={directionArray}/><Marker position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>
+                    return <><DirectionsRoute coords={directionArray}/><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>
                 })}
 
             </LayerGroup>)
