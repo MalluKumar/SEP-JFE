@@ -5,7 +5,7 @@ import { JobData } from './consts';
 import JobMap from './Map';
 
 const App = () => {
-    // react hooks 
+    // react hooks
     const [jobData, setJobData] = useState<JobData[]>([]);
     const [dateTime, setDateTime] = useState<Date>(new Date("2019-01-01")); //TODO: null this out and set in read the data in the lifecycle hook
 
@@ -45,7 +45,7 @@ const App = () => {
 
     useEffect(() => {
         // d3 for reading csv
-        d3.csv(`${process.env.PUBLIC_URL}/data.csv`).then(function (data: any): void {
+        d3.csv(`${process.env.PUBLIC_URL}/data1.csv`).then(function (data: any): void {
             castData(data);
         }).catch(function (err) {
             throw err;
