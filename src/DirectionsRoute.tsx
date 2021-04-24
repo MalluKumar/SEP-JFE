@@ -1,15 +1,17 @@
 import React, { Component, useEffect } from "react";
-import L, {LatLngTuple} from "leaflet";
+import L, { LatLngTuple } from "leaflet";
 import { Marker, useMap } from "react-leaflet";
-//@ts-ignore
-import {antPath} from 'leaflet-ant-path';
-interface IDirectionProps {
-    coords: LatLngTuple,
-}
+// @ts-ignore
+import { antPath } from 'leaflet-ant-path';
+
+// interface IDirectionProps {
+//     coords: LatLngTuple,
+// }
+
 function DirectionsRoute(props: any) {
     const map = useMap();
-    const {coords} = props;
-    useEffect(()=>{
+    const { coords } = props;
+    useEffect(() => {
         // console.log(props)
         const path = antPath(coords, {
             "delay": 400,
@@ -26,9 +28,9 @@ function DirectionsRoute(props: any) {
         });
         map.addLayer(path);
         map.fitBounds(path.getBounds())
-    },[coords]);
+    }, [coords]);
 
-    const position: LatLngTuple = coords[coords.length-1];
+    const position: LatLngTuple = coords[coords.length - 1];
     const myIcon = L.icon({
         iconUrl: "icon_33997.svg",
         // iconAnchor: pinAnchor

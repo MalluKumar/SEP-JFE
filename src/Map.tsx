@@ -1,7 +1,7 @@
 import React from 'react';
-import {LatLngTuple, LatLngExpression} from 'leaflet';
-import {Circle, LayerGroup, MapContainer, Marker, TileLayer} from 'react-leaflet';
-import {Job, JobData, CoordPoint} from './consts';
+import { LatLngTuple, LatLngExpression } from 'leaflet';
+import { Circle, LayerGroup, MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { Job, JobData, CoordPoint } from './consts';
 import DirectionsRoute from './DirectionsRoute';
 
 interface IMapProps {
@@ -33,11 +33,11 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
     }
     baseMap: any = <TileLayer
         attribution='&copy; <a href="&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"/>
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
     setActiveJobs() {
         let activeList: Job[] = [];
-        let directionArray: number[][] = [];
+        // let directionArray: number[][] = [];
         this.props.jobs.forEach(job => {
             // Some condition goes here
             activeList.push({
@@ -50,7 +50,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
             //     directionArray.push([row.latitude, row.longitude])
             // });
         });
-        this.setState({activeJobs: activeList})
+        this.setState({ activeJobs: activeList })
     }
 
 
@@ -63,13 +63,13 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                 {/*        return <Marker key={"JobMarker" + i} position={[job.lat, job.lon]}></Marker>*/}
                 {/*    }*/}
                 {/*)}*/}
-                {this.props.jobs.map(job=>{
+                {this.props.jobs.map(job => {
                     // console.log(job.Path[0].latitude)
                     let directionArray: number[][] = [];
                     job.Path.forEach(row => {
                         directionArray.push([row.latitude, row.longitude])
                     });
-                    return <><DirectionsRoute coords={directionArray}/><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>
+                    return <><DirectionsRoute coords={directionArray} /><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>
                 })}
 
             </LayerGroup>)
@@ -78,11 +78,11 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
     render() {
         return (
             <div>
-                <MapContainer id="container" center={this.centrePoint} zoom={15} scrollWheelZoom={true}>
+                <MapContainer id="container" center={this.centrePoint} zoom={5} scrollWheelZoom={true}>
 
                     {/* <p style={this.dateStyle}>
-                    {`Date: ${this.props.currentDateTime.getDate()}, Time: ${this.props.currentDateTime.getTime()}`}
-                </p> */}
+                        {`Date: ${this.props.currentDateTime.getDate()}, Time: ${this.props.currentDateTime.getTime()}`}
+                    </p> */}
 
                     {this.baseMap}
                     {this.showActiveJobs()}
