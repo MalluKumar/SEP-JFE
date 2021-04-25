@@ -2,7 +2,7 @@ import React from 'react';
 import {LatLngTuple, LatLngExpression} from 'leaflet';
 import {Circle, LayerGroup, MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
 import {Job, JobData, CoordPoint} from './consts';
-
+//  ant map componenet import
 import DirectionsRoute from './DirectionsRoute';
 
 interface IMapProps {
@@ -64,6 +64,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                 {/*        return <Marker key={"JobMarker" + i} position={[job.lat, job.lon]}></Marker>*/}
                 {/*    }*/}
                 {/*)}*/}
+                {/* select props which are comming from App.tsx and run the compnenet of Ant map and Add marker and popup*/}
                 {this.props.jobs.map(job => {
                     // console.log(job.Path[0].latitude)
                     let directionArray: number[][] = [];
