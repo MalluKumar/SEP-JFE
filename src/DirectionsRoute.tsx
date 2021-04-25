@@ -10,7 +10,7 @@ interface IDirectionProps {
 function DirectionsRoute(props: any) {
     const map = useMap();
     const {coords, sdtid} = props;
-    useEffect(()=>{
+    useEffect(() => {
         // console.log(props)
         const path = antPath(coords, {
             "delay": 400,
@@ -29,12 +29,13 @@ function DirectionsRoute(props: any) {
         map.fitBounds(path.getBounds())
     }, [coords]);
 
-    const position: LatLngTuple = coords[coords.length-1];
+    const position: LatLngTuple = coords[coords.length - 1];
     // const myIcon = L.icon({
     //     iconUrl: "icon_33997.svg",
     //     // iconAnchor: pinAnchor
     // });
-    return <Marker draggable={true} position={position}><Popup>{'GSTID: '+sdtid+', Location: '+position}</Popup></Marker>;
-
+    return <Marker draggable={true}
+                   position={position}><Popup>{'GSTID: ' + sdtid + ', Location: ' + position}</Popup></Marker>;
+}
 
 export default DirectionsRoute;
