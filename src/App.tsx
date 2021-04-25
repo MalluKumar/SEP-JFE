@@ -11,6 +11,7 @@ const App = () => {
 
     function castData(rawData: any[]) {
         let jobList: JobData[] = [];
+
         rawData.forEach(item => {
             if (item["B-GST ID"]) { // Ignore the stats and other stuff. Probably put them in another data struct somewhere
                 let currentJob: JobData = {
@@ -39,8 +40,9 @@ const App = () => {
             if (tmp < lowest) lowest = tmp;
         }
         setDateTime(lowest);
+        // console.log(dateTime)
 
-        setJobData(jobList)
+        setJobData(jobList);
     }
 
     useEffect(() => {

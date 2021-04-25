@@ -27,16 +27,14 @@ function DirectionsRoute(props: any) {
         });
         map.addLayer(path);
         map.fitBounds(path.getBounds())
-    },[coords]);
+    }, [coords]);
 
-    // @ts-ignore
     const position: LatLngTuple = coords[coords.length-1];
     // const myIcon = L.icon({
     //     iconUrl: "icon_33997.svg",
     //     // iconAnchor: pinAnchor
     // });
     return <Marker draggable={true} position={position}><Popup>{'GSTID: '+sdtid+', Location: '+position}</Popup></Marker>;
-}
 
 
 export default DirectionsRoute;

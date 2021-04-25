@@ -1,4 +1,4 @@
-export interface JobData{
+export interface JobData {
     JobID: number,
     GSTID: number,
     Address: string,
@@ -14,12 +14,13 @@ export interface JobData{
 }
 
 export type JobStatus = "Complete" | "Incomplete"
-export interface CoordPoint{
+
+export interface CoordPoint {
     latitude: number,
     longitude: number,
 }
 
-export interface Job{
+export interface Job {
     lat: number,
     lon: number,
     status: JobStatus
