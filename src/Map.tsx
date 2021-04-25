@@ -1,6 +1,6 @@
 import React from 'react';
 import {LatLngTuple, LatLngExpression} from 'leaflet';
-import {Circle, LayerGroup, MapContainer, Marker, TileLayer} from 'react-leaflet';
+import {Circle, LayerGroup, MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
 import {Job, JobData, CoordPoint} from './consts';
 import DirectionsRoute from './DirectionsRoute';
 
@@ -69,7 +69,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                     job.Path.forEach(row => {
                         directionArray.push([row.latitude, row.longitude])
                     });
-                    return <><DirectionsRoute coords={directionArray}/><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>
+                    return <><DirectionsRoute coords={directionArray} sdtid={job.GSTID}/><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}><Popup>{'GSTID: '+job.GSTID+', Location: '+[job.Path[0].latitude, job.Path[0].longitude]}</Popup></Marker></>
                 })}
 
             </LayerGroup>)

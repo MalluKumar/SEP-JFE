@@ -1,14 +1,15 @@
 import React, { Component, useEffect } from "react";
 import L, {LatLngTuple} from "leaflet";
-import { Marker, useMap } from "react-leaflet";
+import {Marker, Popup, useMap} from "react-leaflet";
 //@ts-ignore
 import {antPath} from 'leaflet-ant-path';
 interface IDirectionProps {
-    coords: LatLngTuple,
+    coords: number[][],
+    sdtid: string,
 }
 function DirectionsRoute(props: any) {
     const map = useMap();
-    const {coords} = props;
+    const {coords, sdtid} = props;
     useEffect(()=>{
         // console.log(props)
         const path = antPath(coords, {
@@ -28,12 +29,13 @@ function DirectionsRoute(props: any) {
         map.fitBounds(path.getBounds())
     },[coords]);
 
+    // @ts-ignore
     const position: LatLngTuple = coords[coords.length-1];
-    const myIcon = L.icon({
-        iconUrl: "icon_33997.svg",
-        // iconAnchor: pinAnchor
-    });
-    return <Marker draggable={true} position={position}></Marker>;
+    // const myIcon = L.icon({
+    //     iconUrl: "icon_33997.svg",
+    //     // iconAnchor: pinAnchor
+    // });
+    return <Marker draggable={true} position={position}><Popup>{'GSTID: '+sdtid+', Location: '+position}</Popup></Marker>;
 }
 
 
