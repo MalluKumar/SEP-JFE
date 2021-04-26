@@ -59,7 +59,7 @@ const App = () => {
 
   function startTime(today: any) {
     const date = new Date(today);
-    var d = date.getDay();
+    var d = date.getDate();
     var h = date.getHours();
     var m = date.getMinutes();
     var s = date.getSeconds();
@@ -67,13 +67,12 @@ const App = () => {
     s = checkTime(s);
     const clock: any = document.getElementById('txt');
     clock.innerHTML = ' D :  H :  M :  S <br/>' + d + ' : ' + h + ' : ' + m + ' : ' + s;
-  
     var t = setTimeout(function () {
       startTime(new Date(date.getTime() + 1000));
     }, 1000);
 
     if (date.getTime() >= new Date(jobData[4].EndTime).getTime()) {
-      console.log('bleh');
+      // console.log('bleh');
       clearTimeout(t);
     }
   }
@@ -84,6 +83,7 @@ const App = () => {
     return i;
   }
   if (document.getElementById('txt') && jobData && jobData.length > 0) {
+    console.log(jobData[0].StartTime);
     startTime(jobData[0].StartTime);
   }
   return (
@@ -112,4 +112,3 @@ const App = () => {
 };
 
 export default App;
-
