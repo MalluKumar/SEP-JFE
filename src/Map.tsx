@@ -1,7 +1,7 @@
+import { LatLngExpression } from 'leaflet';
 import React from 'react';
-import { LatLngTuple, LatLngExpression } from 'leaflet';
-import { Circle, LayerGroup, MapContainer, Marker, TileLayer } from 'react-leaflet';
-import { Job, JobData, CoordPoint } from './consts';
+import { LayerGroup, MapContainer, Marker, TileLayer } from 'react-leaflet';
+import { Job, JobData } from './consts';
 import DirectionsRoute from './DirectionsRoute';
 
 interface IMapProps {
@@ -12,16 +12,22 @@ interface IMapProps {
 interface IMapState {
     activeJobs: Job[],
     directionLatLng: number[][],
+    currentDateTime: Date,
 }
 
 export default class JobMap extends React.Component<IMapProps, IMapState> {
+    timerID: number;
+    
     constructor(props: IMapProps) {
         super(props);
         this.state = {
             activeJobs: [],
             directionLatLng: [[-33.900, 151.150]],
+            currentDateTime: props.currentDateTime,
         };
+        this.timerID = 0;
     }
+    
     centrePoint: LatLngExpression = [-33.900, 151.150] // Sydney coordinates
     dateStyle: React.CSSProperties = {
         position: 'absolute',
@@ -38,13 +44,15 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
     setActiveJobs() {
         let activeList: Job[] = [];
         // let directionArray: number[][] = [];
-        this.props.jobs.forEach(job => {
-            // Some condition goes here
+        this.props.jobs.forEach(job => {            
             activeList.push({
                 status: "Incomplete",
                 lat: job.Path[0].latitude,
                 lon: job.Path[0].longitude,
-            });
+            });        
+            
+            // Some condition goes here
+            
             // console.log(job);
             // job.Path.forEach(row => {
             //     directionArray.push([row.latitude, row.longitude])
@@ -53,37 +61,58 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
         this.setState({ activeJobs: activeList })
     }
 
-
     showActiveJobs() {
-
         return (
             <LayerGroup>
-                {/*{this.state.activeJobs.map(*/}
+                {/* {this.state.activeJobs.map(*/}
                 {/*    function (job, i) {*/}
                 {/*        return <Marker key={"JobMarker" + i} position={[job.lat, job.lon]}></Marker>*/}
                 {/*    }*/}
-                {/*)}*/}
+                {/*)} */}              
+
                 {this.props.jobs.map(job => {
-                    // console.log(job.Path[0].latitude)
-                    let directionArray: number[][] = [];
-                    job.Path.forEach(row => {
-                        directionArray.push([row.latitude, row.longitude])
-                    });
-                    return <><DirectionsRoute coords={directionArray} /><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>
+                    let directionArray: number[][] = [];                  
+
+                    console.log("Current Time: " + this.state.currentDateTime.toLocaleString() +"\nStart Time:   " + job.StartTime.toLocaleString() + "\nEnd Time:     " + job.EndTime.toLocaleString());
+                    if(job.StartTime <= this.state.currentDateTime && job.EndTime >= this.state.currentDateTime)
+                    {     
+                        job.Path.forEach(row => {
+                            directionArray.push([row.latitude, row.longitude])
+                        });   
+                        
+                        return <><DirectionsRoute coords={directionArray} /><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>                 
+                    }                                      
                 })}
 
             </LayerGroup>)
     }
 
+    componentDidMount() {
+        var time = new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 1))
+
+        this.timerID = window.setInterval(
+          () => this.tick(),
+          1000
+        );
+      }
+
+      tick() {
+          // Update time by 1 minute
+        this.setState({  
+            currentDateTime: new Date(this.state.currentDateTime.setMinutes(this.state.currentDateTime.getMinutes() + 1))
+          });
+
+        this.showActiveJobs();
+      }
+
+      componentWillUnmount() {
+        clearInterval(this.timerID);
+      }
+
     render() {
         return (
             <div>
-                <MapContainer id="container" center={this.centrePoint} zoom={5} scrollWheelZoom={true}>
-
-                    {/* <p style={this.dateStyle}>
-                        {`Date: ${this.props.currentDateTime.getDate()}, Time: ${this.props.currentDateTime.getTime()}`}
-                    </p> */}
-
+                <MapContainer id="container" center={this.centrePoint} zoom={10} scrollWheelZoom={true}>
                     {this.baseMap}
                     {this.showActiveJobs()}
                     {/* A show paths method should be built here or something */}
