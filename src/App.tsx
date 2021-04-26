@@ -41,7 +41,6 @@ const App = () => {
       if (tmp < lowest) lowest = tmp;
     }
     setDateTime(lowest);
-    // console.log(dateTime);
 
     setJobData(jobList);
   }
@@ -72,7 +71,7 @@ const App = () => {
     }, 1000);
 
     if (date.getTime() >= new Date(jobData[4].EndTime).getTime()) {
-      // console.log('bleh');
+  
       clearTimeout(t);
     }
   }
