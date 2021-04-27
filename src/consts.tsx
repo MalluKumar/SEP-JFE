@@ -25,3 +25,7 @@ export interface Job {
     lon: number,
     status: JobStatus
 }
+
+export interface IClockProps {
+    currentDateTime: Date,    
+  }

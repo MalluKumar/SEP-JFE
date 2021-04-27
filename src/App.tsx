@@ -1,18 +1,20 @@
 import * as d3 from "d3";
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { JobData } from './consts';
+import { IClockProps, JobData } from './consts';
 import JobMap from './Map';
 import { Clock } from "./Clock";
 
 const App = () => {
+    var clockProps: IClockProps = { currentDateTime: new Date() };
+    const [clock, setClock] = useState<Clock>(new Clock(clockProps));
     // react hooks
     const [jobData, setJobData] = useState<JobData[]>([]);
     const [dateTime, setDateTime] = useState<Date>(new Date()); //TODO: null this out and set in read the data in the lifecycle hook
-
+    
     function castData(rawData: any[]) {
         let jobList: JobData[] = [];
-
+        
         rawData.forEach(item => {
             if (item["B-GST ID"]) { // Ignore the stats and other stuff. Probably put them in another data struct somewhere
                 let currentJob: JobData = {
@@ -32,17 +34,20 @@ const App = () => {
                 jobList.push(currentJob)
             }
         });
-
+        
         // Grab the first date, probably rewrite this or sort the array depending on your needs
         var lowest: Date = new Date(new Date().getUTCFullYear(), 12, 31);  //Do as I say, not as I do
         var tmp;
         for (var i = jobList.length - 1; i >= 0; i--) {
             tmp = jobList[i].StartTime;
             if (tmp < lowest) lowest = tmp;
-        }
+        } 
         setDateTime(lowest);
-
         setJobData(jobList);
+
+        // clockProps.currentDateTime = lowest;
+        // var clock: Clock = new Clock(clockProps);
+        // setClock(clock);        
     }
 
     useEffect(() => {
@@ -55,7 +60,7 @@ const App = () => {
     }, []);
 
     return (
-        <div>   
+        <div>              
             <Clock currentDateTime={dateTime} />
             <JobMap currentDateTime={dateTime} jobs={jobData} />
             <button onClick={(e) => { console.log(jobData) }} >Show State Data </button>

@@ -1,12 +1,14 @@
-import { LatLngExpression } from 'leaflet';
 import React from 'react';
-import { LayerGroup, MapContainer, Marker, TileLayer } from 'react-leaflet';
-import { Job, JobData } from './consts';
+import {LatLngTuple, LatLngExpression} from 'leaflet';
+import {Circle, LayerGroup, MapContainer, Marker, Popup, TileLayer} from 'react-leaflet';
+import {Job, JobData, CoordPoint} from './consts';
+//  ant map componenet import
 import DirectionsRoute from './DirectionsRoute';
+import { Clock } from './Clock';
 
 interface IMapProps {
     currentDateTime: Date,
-    jobs: JobData[],
+    jobs: JobData[]
 }
 
 interface IMapState {
@@ -24,7 +26,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
             activeJobs: [],
             directionLatLng: [[-33.900, 151.150]],
             currentDateTime: props.currentDateTime,
-        };
+        }; 
         this.timerID = 0;
     }
     
@@ -68,35 +70,33 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                 {/*    function (job, i) {*/}
                 {/*        return <Marker key={"JobMarker" + i} position={[job.lat, job.lon]}></Marker>*/}
                 {/*    }*/}
-                {/*)} */}              
-
+                {/*)}*/}
+                {/* select props which are comming from App.tsx and run the compnenet of Ant map and Add marker and popup*/}
                 {this.props.jobs.map(job => {
-                    let directionArray: number[][] = [];                  
+                    // console.log(job.Path[0].latitude)
+                    let directionArray: number[][] = [];
 
                     console.log("Current Time: " + this.state.currentDateTime.toLocaleString() +"\nStart Time:   " + job.StartTime.toLocaleString() + "\nEnd Time:     " + job.EndTime.toLocaleString());
                     if(job.StartTime <= this.state.currentDateTime && job.EndTime >= this.state.currentDateTime)
-                    {     
+                    {
                         job.Path.forEach(row => {
                             directionArray.push([row.latitude, row.longitude])
-                        });   
-                        
-                        return <><DirectionsRoute coords={directionArray} /><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}></Marker></>                 
-                    }                                      
+                        });
+                        return <><DirectionsRoute coords={directionArray} sdtid={job.GSTID}/><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}><Popup>{'GSTID: '+job.GSTID+', Location: '+[job.Path[0].latitude, job.Path[0].longitude]}</Popup></Marker></> 
+                    }                    
                 })}
 
             </LayerGroup>)
     }
 
     componentDidMount() {
-        var time = new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 1))
-
         this.timerID = window.setInterval(
           () => this.tick(),
           1000
         );
       }
-
-      tick() {
+      
+      tick() { 
           // Update time by 1 minute
         this.setState({  
             currentDateTime: new Date(this.state.currentDateTime.setMinutes(this.state.currentDateTime.getMinutes() + 1))
@@ -108,8 +108,9 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
       componentWillUnmount() {
         clearInterval(this.timerID);
       }
-
+      
     render() {
+        console.log();
         return (
             <div>
                 <MapContainer id="container" center={this.centrePoint} zoom={10} scrollWheelZoom={true}>

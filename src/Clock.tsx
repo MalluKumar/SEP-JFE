@@ -36,8 +36,7 @@ export class Clock extends React.Component<IClockProps, IClockState> {
   
     componentWillUnmount() {
       clearInterval(this.timerID);
-    }
-  
+    }  
 
     tick() {      
       this.setState({  
@@ -48,7 +47,7 @@ export class Clock extends React.Component<IClockProps, IClockState> {
     render() {
       return (
         <div style={this.dateStyle}>
-          <h2>{this.state.date.toLocaleDateString()}<br></br> {this.state.date.toLocaleTimeString()}</h2>
+          <h2>{this.state.date.toLocaleDateString()}<br/>{this.state.date.toLocaleTimeString()}</h2>
         </div>
       );
     }
