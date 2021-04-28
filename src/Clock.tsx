@@ -1,11 +1,12 @@
 import React from "react";
 
 interface IClockProps {
-  currentDateTime: Date,    
+  currentDateTime: Date,
+  updateTime: Function,
 }
 
 interface IClockState {
-    date: Date,
+    
 }
 
 export class Clock extends React.Component<IClockProps, IClockState> {
@@ -39,21 +40,15 @@ export class Clock extends React.Component<IClockProps, IClockState> {
     }  
 
     tick() {      
-      this.setState({  
-        date: new Date(this.state.date.setSeconds(this.state.date.getSeconds() + 1))
-      });
+      // this.setState({ date: new Date(this.state.date.setSeconds(this.state.date.getSeconds() + 1)) });
+      this.props.updateTime(new Date(this.props.currentDateTime.setSeconds(this.props.currentDateTime.getSeconds() + 1)))
     }
   
     render() {
       return (
         <div style={this.dateStyle}>
-          <h2>{this.state.date.toLocaleDateString()}<br/>{this.state.date.toLocaleTimeString()}</h2>
+          <h2>{this.props.currentDateTime.toLocaleDateString()}<br/>{this.props.currentDateTime.toLocaleTimeString()}</h2>
         </div>
       );
     }
   }
-  
-//   ReactDOM.render(
-//     <Clock />,
-//     document.getElementById('root')
-//   );

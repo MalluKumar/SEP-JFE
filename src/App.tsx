@@ -1,13 +1,11 @@
 import * as d3 from "d3";
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { IClockProps, JobData } from './consts';
-import JobMap from './Map';
 import { Clock } from "./Clock";
+import { JobData } from './consts';
+import JobMap from './Map';
 
 const App = () => {
-    var clockProps: IClockProps = { currentDateTime: new Date() };
-    const [clock, setClock] = useState<Clock>(new Clock(clockProps));
     // react hooks
     const [jobData, setJobData] = useState<JobData[]>([]);
     const [dateTime, setDateTime] = useState<Date>(new Date()); //TODO: null this out and set in read the data in the lifecycle hook
@@ -43,11 +41,7 @@ const App = () => {
             if (tmp < lowest) lowest = tmp;
         } 
         setDateTime(lowest);
-        setJobData(jobList);
-
-        // clockProps.currentDateTime = lowest;
-        // var clock: Clock = new Clock(clockProps);
-        // setClock(clock);        
+        setJobData(jobList);      
     }
 
     useEffect(() => {
@@ -61,7 +55,7 @@ const App = () => {
 
     return (
         <div>              
-            <Clock currentDateTime={dateTime} />
+            <Clock currentDateTime={dateTime} updateTime={setDateTime} />
             <JobMap currentDateTime={dateTime} jobs={jobData} />
             <button onClick={(e) => { console.log(jobData) }} >Show State Data </button>
         </div>
