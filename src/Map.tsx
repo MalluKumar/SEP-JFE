@@ -25,6 +25,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
             open: false,
         };
     }
+
     centrePoint: LatLngExpression = [-33.900, 151.150] // Sydney coordinates
     dateStyle: React.CSSProperties = {
         position: 'absolute',
@@ -36,7 +37,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
     }
     baseMap: any = <TileLayer
         attribution='&copy; <a href="&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"/>
 
     setActiveJobs() {
         let activeList: Job[] = [];
@@ -53,7 +54,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
             //     directionArray.push([row.latitude, row.longitude])
             // });
         });
-        this.setState({ activeJobs: activeList })
+        this.setState({activeJobs: activeList})
     }
 
 
@@ -73,21 +74,23 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                     job.Path.forEach(row => {
                         directionArray.push([row.latitude, row.longitude])
                     });
-                    return <><DirectionsRoute coords={directionArray} sdtid={job.GSTID}/><Marker draggable={true} position={[job.Path[0].latitude, job.Path[0].longitude]}><Popup>{'GSTID: '+job.GSTID+', Location: '+[job.Path[0].latitude, job.Path[0].longitude]}</Popup></Marker></>
+                    return <><DirectionsRoute coords={directionArray} sdtid={job.GSTID}/><Marker draggable={true}
+                                                                                                 position={[job.Path[0].latitude, job.Path[0].longitude]}><Popup>{'GSTID: ' + job.GSTID + ', Location: ' + [job.Path[0].latitude, job.Path[0].longitude]}</Popup></Marker></>
 
                 })}
 
             </LayerGroup>)
     }
 
-    handleClick=()=>{
+    handleClick = () => {
         console.log("clicked");
         this.setState({open: !this.state.open})
     }
+
     render() {
         return (
             <div style={{display: "flex"}}>
-                <div style={{width: this.state.open?'80%':'100%',}}>
+                <div style={{width: this.state.open ? '80%' : '100%',}}>
                     <MapContainer id="container" center={this.centrePoint} zoom={5} scrollWheelZoom={true}>
 
                         {/* <p style={this.dateStyle}>
@@ -103,9 +106,18 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                     }}>Show the Jobs
                     </button>
                 </div>
-                <div style={{width: this.state.open?'20%':'0', backgroundColor: '#3DD7FA'}}>
+                <div style={{width: this.state.open ? '20%' : '0', backgroundColor: '#3DD7FA'}}>
                 </div>
-                <img onClick={this.handleClick} src={this.state.open?'images/right-arrow.png':'images/left-arrow.png'} style={{position: 'absolute', top: 25, right: this.state.open?225:25, width: 25, height: 25, zIndex: 1000, cursor: "grab"}}/>
+                <img onClick={this.handleClick}
+                     src={this.state.open ? 'images/right-arrow.png' : 'images/left-arrow.png'} style={{
+                    position: 'absolute',
+                    top: 25,
+                    right: this.state.open ? 225 : 25,
+                    width: 25,
+                    height: 25,
+                    zIndex: 1000,
+                    cursor: "grab"
+                }}/>
             </div>
         )
     }
