@@ -109,15 +109,16 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                 <div style={{width: this.state.open ? '20%' : '0', backgroundColor: '#3DD7FA'}}>
                 </div>
                 <img onClick={this.handleClick}
-                     src={this.state.open ? 'images/right-arrow.png' : 'images/left-arrow.png'} style={{
-                    position: 'absolute',
-                    top: 25,
-                    right: this.state.open ? 225 : 25,
-                    width: 25,
-                    height: 25,
-                    zIndex: 1000,
-                    cursor: "grab"
-                }}/>
+                     src={this.state.open ? 'images/right-arrow.png' : 'images/left-arrow.png'}
+                     style={{
+                         position: 'absolute',
+                         top: 25,
+                         right: this.state.open ? 225 : 25,
+                         width: 25,
+                         height: 25,
+                         zIndex: 1000,
+                         cursor: "grab"
+                     }}/>
             </div>
         )
     }
