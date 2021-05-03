@@ -13,6 +13,7 @@ interface IMapProps {
 interface IMapState {
     activeJobs: Job[],
     directionLatLng: number[][],
+    open: boolean
 }
 
 export default class JobMap extends React.Component<IMapProps, IMapState> {
@@ -21,6 +22,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
         this.state = {
             activeJobs: [],
             directionLatLng: [[-33.900, 151.150]],
+            open: false,
         };
     }
     centrePoint: LatLngExpression = [-33.900, 151.150] // Sydney coordinates
@@ -78,23 +80,32 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
             </LayerGroup>)
     }
 
+    handleClick=()=>{
+        console.log("clicked");
+        this.setState({open: !this.state.open})
+    }
     render() {
         return (
-            <div>
-                <MapContainer id="container" center={this.centrePoint} zoom={5} scrollWheelZoom={true}>
+            <div style={{display: "flex"}}>
+                <div style={{width: this.state.open?'80%':'100%',}}>
+                    <MapContainer id="container" center={this.centrePoint} zoom={5} scrollWheelZoom={true}>
 
-                    {/* <p style={this.dateStyle}>
+                        {/* <p style={this.dateStyle}>
                         {`Date: ${this.props.currentDateTime.getDate()}, Time: ${this.props.currentDateTime.getTime()}`}
                     </p> */}
 
-                    {this.baseMap}
-                    {this.showActiveJobs()}
-                    {/* A show paths method should be built here or something */}
-                </MapContainer>
-                <button onClick={(e) => {
-                    this.setActiveJobs()
-                }}>Show the Jobs
-                </button>
+                        {this.baseMap}
+                        {this.showActiveJobs()}
+                        {/* A show paths method should be built here or something */}
+                    </MapContainer>
+                    <button onClick={(e) => {
+                        this.setActiveJobs()
+                    }}>Show the Jobs
+                    </button>
+                </div>
+                <div style={{width: this.state.open?'20%':'0', backgroundColor: '#3DD7FA'}}>
+                </div>
+                <img onClick={this.handleClick} src={this.state.open?'images/right-arrow.png':'images/left-arrow.png'} style={{position: 'absolute', top: 25, right: this.state.open?225:25, width: 25, height: 25, zIndex: 1000, cursor: "grab"}}/>
             </div>
         )
     }
