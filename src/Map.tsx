@@ -25,14 +25,23 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
 
     centrePoint: LatLngExpression = [-33.900, 151.150] // Sydney coordinates
 
-    inactiveIcon: Icon = new Icon({
+    jobIcon: Icon = new Icon({
         className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        // iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
+        iconUrl: `${process.env.PUBLIC_URL}/Job.png`,
         // shadowUrl: 'https://unpkg.com/browse/leaflet@1.7.1/dist/images/marker-shadow.png',
-        iconSize: [25, 41],
+        iconSize: [30, 41],
         iconAnchor: [12, 41],
         popupAnchor: [1, -34],
         // shadowSize: [41, 41]
+    });
+
+    gstIcon: Icon = new Icon({
+        className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
+        iconUrl: `${process.env.PUBLIC_URL}/GST.png`,
+        iconSize: [30, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
     });
 
     activeIcon: Icon = new Icon({
@@ -113,11 +122,11 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
                         return <>
                             <DirectionsRoute coords={remainingCoordinates} />
                             {/* GST Marker */}
-                            <Marker draggable={true} position={[currentLat, currentLon]}>
+                            <Marker draggable={true} position={[currentLat, currentLon]} icon={this.gstIcon}>
                                 <Popup>{'GST ID: ' + job.GSTID + ', Location: ' + [currentLat, currentLon]}</Popup>
                             </Marker>
-                            {/* Travelling to Location Marker */}
-                            <Marker draggable={true} position={[job.Path[length - 1].latitude, job.Path[length - 1].longitude]} icon={this.inactiveIcon}>
+                            {/* Travelling to Job Location Marker */}
+                            <Marker draggable={true} position={[job.Path[length - 1].latitude, job.Path[length - 1].longitude]} icon={this.jobIcon}>
                                 <Popup>{'Job ID: ' + job.JobID + ', Location: ' + [job.Path[length - 1].latitude, job.Path[length - 1].longitude]}</Popup>
                             </Marker>
                         </>
@@ -138,7 +147,7 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
     render() {
         return (
             <div>
-                <MapContainer id="container" center={this.centrePoint} zoom={10} scrollWheelZoom={true}>
+                <MapContainer id="container" center={this.centrePoint} zoom={5} scrollWheelZoom={true}>
                     {this.baseMap}
                     {this.showActiveJobs()}
                 </MapContainer>
