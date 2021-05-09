@@ -1,12 +1,14 @@
-import { Icon, LatLngExpression } from 'leaflet';
+import { LatLngExpression } from 'leaflet';
 import React from 'react';
-import { LayerGroup, MapContainer, Marker, Popup, TileLayer } from 'react-leaflet';
+import { LayerGroup, MapContainer, TileLayer } from 'react-leaflet';
 import { Job, JobData } from './consts';
 import DirectionsRoute from './DirectionsRoute';
 
 interface IMapProps {
     currentDateTime: Date,
-    jobs: JobData[]
+    jobs: JobData[],
+    paths: Map<number, any>,
+    updatePath: Function
 }
 
 interface IMapState {
@@ -19,49 +21,11 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
         super(props);
         this.state = {
             activeJobs: [],
-            directionLatLng: [[-33.900, 151.150]],
+            directionLatLng: [[-33.900, 151.150]]
         };
     }
 
     centrePoint: LatLngExpression = [-33.900, 151.150] // Sydney coordinates
-
-    jobIcon: Icon = new Icon({
-        className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
-        // iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-red.png',
-        iconUrl: `${process.env.PUBLIC_URL}/Job.png`,
-        // shadowUrl: 'https://unpkg.com/browse/leaflet@1.7.1/dist/images/marker-shadow.png',
-        iconSize: [30, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        // shadowSize: [41, 41]
-    });
-
-    gstIcon: Icon = new Icon({
-        className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
-        iconUrl: `${process.env.PUBLIC_URL}/GST.png`,
-        iconSize: [30, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-    });
-
-    activeIcon: Icon = new Icon({
-        className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
-        iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-green.png',
-        // shadowUrl: 'https://unpkg.com/browse/leaflet@1.7.1/dist/images/marker-shadow.png',
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
-        // shadowSize: [41, 41]
-    });
-
-    dateStyle: React.CSSProperties = {
-        position: 'absolute',
-        top: 5,
-        right: 5,
-        zIndex: 1000,
-        fontSize: 16,
-        fontWeight: "bold"
-    }
 
     baseMap: any = <TileLayer
         attribution='&copy; <a href="&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -70,13 +34,26 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
     setActiveJobs() {
         let activeList: Job[] = [];
         this.props.jobs.forEach(job => {
+            let coordinates: number[][] = [];
+
+            job.Path.forEach(row => {
+                coordinates.push([row.latitude, row.longitude])
+            });
+
             activeList.push({
                 status: "Incomplete",
-                lat: job.Path[0].latitude,
-                lon: job.Path[0].longitude,
+                currentLat: job.Path[0].latitude,
+                currentLon: job.Path[0].longitude,
+                GSTID: job.GSTID,
+                JobID: job.JobID,
+                endLat: job.Path[job.Path.length - 1].latitude,
+                endLon: job.Path[job.Path.length - 1].longitude,
+                directionArray: coordinates
             });
         });
         this.setState({ activeJobs: activeList })
+
+        console.log(activeList);
     }
 
     showActiveJobs() {
@@ -84,70 +61,70 @@ export default class JobMap extends React.Component<IMapProps, IMapState> {
         return (
             <LayerGroup>
                 {this.props.jobs.map(job => {
+                    let currentLat: number;
+                    let currentLon: number;
                     let length = job.Path.length;
                     let travelEndTime = new Date(job.EndTime);
                     travelEndTime.setMinutes(travelEndTime.getMinutes() - job.JobDuration);
 
+                    // Divides number of coordinates by travel time to get number of coordinates
+                    let coordinateInterval = +(job.Path.length / job.TravelDuration).toFixed();
+
+                    // Gets time in minutes from current time to job start time
+                    let timeSinceStartInMinutes = Math.floor(((this.props.currentDateTime.valueOf() - job.StartTime.valueOf()) / (1000 * 60)) % 60);
+
+                    // Multiply interval by time since start to get index of coordinate to use
+                    let arrayIndex = coordinateInterval * timeSinceStartInMinutes;
+
+                    // Create coord array containing unvisited coordinates 
+                    let remainingCoordinates = job.Path.map(job => job);
+
+                    // Set lat and long based on index
+                    if (arrayIndex === 0) {
+                        currentLat = job.Path[arrayIndex].latitude;
+                        currentLon = job.Path[arrayIndex].longitude;
+                    }
+                    else if (arrayIndex > 0 && arrayIndex < job.Path.length) {
+                        remainingCoordinates = remainingCoordinates.slice(arrayIndex - 1);
+                        currentLat = job.Path[arrayIndex - 1].latitude;
+                        currentLon = job.Path[arrayIndex - 1].longitude;
+                    }
+                    else {
+                        currentLat = job.Path[length - 1].latitude;
+                        currentLon = job.Path[length - 1].longitude;
+                    }
+
+                    let directionArray: number[][] = [];
+                    remainingCoordinates.forEach(row => {
+                        directionArray.push([row.latitude, row.longitude])
+                    });
+
+                    let activeJob: Job = {
+                        status: "Incomplete",
+                        currentLat: currentLat,
+                        currentLon: currentLon,
+                        GSTID: job.GSTID,
+                        JobID: job.JobID,
+                        endLat: job.Path[job.Path.length - 1].latitude,
+                        endLon: job.Path[job.Path.length - 1].longitude,
+                        directionArray: directionArray
+                    };
+
                     if (job.StartTime <= this.props.currentDateTime && travelEndTime > this.props.currentDateTime) {
-                        let currentLat = job.Path[0].latitude;
-                        let currentLon = job.Path[0].longitude;
-
-                        // Divides number of coordinates by travel time to get number of coordinates
-                        let coordinateInterval = +(job.Path.length / job.TravelDuration).toFixed();
-
-                        // Gets time in minutes from current time to job start time
-                        let timeSinceStartInMinutes = Math.floor(((this.props.currentDateTime.valueOf() - job.StartTime.valueOf()) / (1000 * 60)) % 60);
-
-                        // Multiply interval by time since start to get index of coordinate to use
-                        let arrayIndex = coordinateInterval * timeSinceStartInMinutes;
-
-                        // Set lat and long based on index
-                        if (arrayIndex == 0) {
-                            currentLat = job.Path[arrayIndex].latitude;
-                            currentLon = job.Path[arrayIndex].longitude;
-                        }
-                        else if (arrayIndex > 0 && arrayIndex < job.Path.length) {
-                            currentLat = job.Path[arrayIndex - 1].latitude;
-                            currentLon = job.Path[arrayIndex - 1].longitude;
-                        }
-                        else {
-                            currentLat = job.Path[length - 1].latitude;
-                            currentLon = job.Path[length - 1].longitude;
-                        }
-
-                        // Create coord array containing unvisited coordinates 
-                        let remainingCoordinates = job.Path.map(job => job);
-                        remainingCoordinates = remainingCoordinates.slice(arrayIndex);
-
-                        return <>
-                            <DirectionsRoute coords={remainingCoordinates} />
-                            {/* GST Marker */}
-                            <Marker draggable={true} position={[currentLat, currentLon]} icon={this.gstIcon}>
-                                <Popup>{'GST ID: ' + job.GSTID + ', Location: ' + [currentLat, currentLon]}</Popup>
-                            </Marker>
-                            {/* Travelling to Job Location Marker */}
-                            <Marker draggable={true} position={[job.Path[length - 1].latitude, job.Path[length - 1].longitude]} icon={this.jobIcon}>
-                                <Popup>{'Job ID: ' + job.JobID + ', Location: ' + [job.Path[length - 1].latitude, job.Path[length - 1].longitude]}</Popup>
-                            </Marker>
-                        </>
+                        return <DirectionsRoute job={activeJob} oldPath={this.props.paths.get(job.JobID)} updatePath={this.props.updatePath} travelling={true} />
                     }
                     else if (travelEndTime <= this.props.currentDateTime && job.EndTime >= this.props.currentDateTime) {
-                        return <>
-                            {/* Job In Progress Location Marker */}
-                            <Marker draggable={true} position={[job.Path[length - 1].latitude, job.Path[length - 1].longitude]} icon={this.activeIcon}>
-                                <Popup>{'Job ID: ' + job.JobID + ', Location: ' + [job.Path[length - 1].latitude, job.Path[length - 1].longitude]}</Popup>
-                            </Marker>
-                        </>
+                        return <DirectionsRoute job={activeJob} oldPath={this.props.paths.get(job.JobID)} updatePath={this.props.updatePath} travelling={false} />
                     }
-
                 })}
-            </LayerGroup>)
+            </LayerGroup>
+        )
     }
 
     render() {
         return (
             <div>
-                <MapContainer id="container" center={this.centrePoint} zoom={5} scrollWheelZoom={true}>
+                <MapContainer id="container" center={this.centrePoint} zoom={10} scrollWheelZoom={true}>
                     {this.baseMap}
                     {this.showActiveJobs()}
                 </MapContainer>

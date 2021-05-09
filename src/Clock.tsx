@@ -5,11 +5,11 @@ interface IClockProps {
   updateTime: Function,
 }
 
-interface IClockState {
+// interface IClockState {
 
-}
+// }
 
-export class Clock extends React.Component<IClockProps, IClockState> {
+export class Clock extends React.Component<IClockProps> {
   timerID: number;
 
   dateStyle: React.CSSProperties = {

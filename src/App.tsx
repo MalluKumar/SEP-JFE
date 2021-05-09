@@ -9,6 +9,11 @@ const App = () => {
     // react hooks
     const [jobData, setJobData] = useState<JobData[]>([]);
     const [dateTime, setDateTime] = useState<Date>(new Date()); //TODO: null this out and set in read the data in the lifecycle hook
+    const [paths, setPath] = useState(new Map<number, any>());
+
+    const updatePath = (k: any, v: any) => {
+        setPath(paths.set(k, v));
+    }
 
     function castData(rawData: any[]) {
         let jobList: JobData[] = [];
@@ -57,7 +62,7 @@ const App = () => {
     return (
         <div>
             <Clock currentDateTime={dateTime} updateTime={setDateTime} />
-            <JobMap currentDateTime={dateTime} jobs={jobData} />
+            <JobMap currentDateTime={dateTime} jobs={jobData} paths={paths} updatePath={updatePath} />
             <button onClick={(e) => { console.log(jobData) }} >Show State Data</button>
         </div>
     );

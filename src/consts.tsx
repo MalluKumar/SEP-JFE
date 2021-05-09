@@ -21,7 +21,12 @@ export interface CoordPoint {
 }
 
 export interface Job {
-    lat: number,
-    lon: number,
-    status: JobStatus
+    JobID: number,
+    GSTID: number,
+    currentLat: number,
+    currentLon: number,
+    endLat: number,
+    endLon: number,
+    status: JobStatus,
+    directionArray: number[][],
 }
