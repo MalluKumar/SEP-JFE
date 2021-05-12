@@ -10,7 +10,8 @@ export interface JobData {
     JobDuration: number,
     EndTime: Date,
     DistanceTravelled: number,
-    Path: CoordPoint[]
+    Path: CoordPoint[],
+    Priority: string
 }
 
 export type JobStatus = "Complete" | "Incomplete"
