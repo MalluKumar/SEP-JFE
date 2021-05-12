@@ -11,7 +11,7 @@ const App = () => {
     const [dateTime, setDateTime] = useState<Date>(new Date()); //TODO: null this out and set in read the data in the lifecycle hook
     const [paths, setPath] = useState(new Map<number, any>());
 
-    const updatePath = (k: any, v: any) => {
+    const updatePath = (k: number, v: any) => {
         setPath(paths.set(k, v));
     }
 
@@ -32,7 +32,8 @@ const App = () => {
                     JobDuration: item["I-JOB DURATION MINS"],
                     EndTime: new Date(item["J-END DATE TIME"]),
                     DistanceTravelled: item["K-DISTANCE IN METERS"],
-                    Path: JSON.parse(item["L-POINTS IN TRIP"])
+                    Path: JSON.parse(item["L-POINTS IN TRIP"]),
+                    Priority: item["M-JOB PRIORITY"],
                 }
                 jobList.push(currentJob)
             }
