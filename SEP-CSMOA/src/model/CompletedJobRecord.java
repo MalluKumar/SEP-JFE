@@ -42,6 +42,8 @@ public class CompletedJobRecord {
 	private Integer lengthInMeters;
 	@CsvBindByName(column = "L-Points in Trip")
 	private String points;
+	@CsvBindByName(column = "M-Job Priority")
+	private String priority;
 
 	/**
 	 * @param gst
@@ -62,7 +64,7 @@ public class CompletedJobRecord {
 		this.endDateAndTime = job.getEndDateAndTime();
 		this.lengthInMeters = job.getLengthInMeters();
 		this.points = job.getPoints();
-
+		this.priority = job.getJobPriority();
 	}
 
 	@Override
