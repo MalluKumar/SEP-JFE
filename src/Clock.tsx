@@ -41,6 +41,8 @@ export class Clock extends React.Component<IClockProps> {
         )
       )
     );
+
+    this.props.updateTime(new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 1)))
   }
 
   render() {
