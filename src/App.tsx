@@ -17,38 +17,9 @@ const App = () => {
 
   function castData(rawData: any[]) {
     let jobList: JobData[] = [];
-    
-    const updatePath = (k: number, v: any) => {
-        setPath(paths.set(k, v));
-    }
 
-    function castData(rawData: any[]) {
-        let jobList: JobData[] = [];
-
-        rawData.forEach(item => {
-            if (item["B-GST ID"]) { // Ignore the stats and other stuff. Probably put them in another data struct somewhere
-                let currentJob: JobData = {
-                    JobID: item["A-JOB ID"],
-                    GSTID: item["B-GST ID"],
-                    Address: item["C-ADDRESS"],
-                    Suburb: item["D-SUBURB"],
-                    Postcode: item["E-POSTCODE"],
-                    StartTime: new Date(item["F-START DATE TIME"]),
-                    IdleDuration: item["G-IDLE TIME MINS"],
-                    TravelDuration: item["H-TRAVEL TIME MINS"],
-                    JobDuration: item["I-JOB DURATION MINS"],
-                    EndTime: new Date(item["J-END DATE TIME"]),
-                    DistanceTravelled: item["K-DISTANCE IN METERS"],
-                    Path: JSON.parse(item["L-POINTS IN TRIP"]),
-                    Priority: item["M-JOB PRIORITY"],
-                }
-                jobList.push(currentJob)
-            }
-        });
-
-    rawData.forEach((item) => {
+    rawData.forEach(item => {
       if (item["B-GST ID"]) {
-        // Ignore the stats and other stuff. Probably put them in another data struct somewhere
         let currentJob: JobData = {
           JobID: item["A-JOB ID"],
           GSTID: item["B-GST ID"],
@@ -63,14 +34,15 @@ const App = () => {
           DistanceTravelled: item["K-DISTANCE IN METERS"],
           Path: JSON.parse(item["L-POINTS IN TRIP"]),
           Priority: item["M-JOB PRIORITY"],
-        };
+        }
+
         jobList.push(currentJob);
       }
     });
 
-    // Grab the first date, probably rewrite this or sort the array depending on your needs
-    var lowest: Date = new Date(new Date().getUTCFullYear(), 12, 31); //Do as I say, not as I do
+    var lowest: Date = new Date(new Date().getUTCFullYear(), 12, 31);
     var tmp;
+
     for (var i = jobList.length - 1; i >= 0; i--) {
       tmp = jobList[i].StartTime;
       if (tmp < lowest) lowest = tmp;
@@ -109,6 +81,6 @@ const App = () => {
       </button>
     </div>
   );
-};
+}
 
 export default App;
