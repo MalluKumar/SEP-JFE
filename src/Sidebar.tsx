@@ -1,18 +1,28 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { Button, ButtonGroup, Tooltip } from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import { makeStyles } from "@material-ui/core/styles";
+import AddIcon from '@material-ui/icons/Add';
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import FastForwardIcon from '@material-ui/icons/FastForward';
+import RemoveIcon from '@material-ui/icons/Remove';
+import ScheduleIcon from '@material-ui/icons/Schedule';
+import TimerIcon from '@material-ui/icons/Timer';
+import React from "react";
 
-const drawerWidth = 240;
+const drawerWidth = 255;
 
 interface IProps {
-  currentDateTime: Date;
+  currentDateTime: Date,
+  complianceRate: number,
+  distanceTravelled: number,
+  rate: number,
+  updateRate: Function
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -38,12 +48,21 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
+    padding: theme.spacing(3)
   },
 }));
 
-export const Sidebar: React.FC<IProps> = ({ currentDateTime }) => {
+export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, distanceTravelled, rate, updateRate }) => {
   const classes = useStyles();
+
+  function FastForward() {
+    updateRate(rate + 1);
+  }
+
+  function FastRewind() {
+    updateRate(rate - 1);
+  }
+
   return (
     <div className={classes.root}>
       <Drawer
@@ -54,33 +73,66 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime }) => {
         }}
         anchor="right"
       >
-        <h2 className={classes.dateStyle}>
+        {/* <h2 className={classes.dateStyle}>
           {currentDateTime && currentDateTime.toLocaleDateString()}
           <br />
           {currentDateTime && currentDateTime.toLocaleTimeString()}
-        </h2>
-        <Divider />
+        </h2> */}
         <List>
-          {["Fast Foward Time", "Compliance", "80%", "Total Distance"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+          <ListItem>
+            <Tooltip title="Date" placement="left">
+              <ListItemIcon aria-label="Date">
+                <CalendarTodayIcon />
               </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+            </Tooltip>
+            <ListItemText primary={currentDateTime.toLocaleDateString()} />
+          </ListItem>
+          <ListItem>
+            <Tooltip title="Current Time" placement="left">
+              <ListItemIcon aria-label="Current Time">
+                <ScheduleIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={currentDateTime.toLocaleTimeString()} />
+          </ListItem>
         </List>
+
         <Divider />
+
         <List>
-          {["Average Time", "Idle time"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+          <ListItem>
+            <Tooltip title="Fast Forward" placement="left">
+              <ListItemIcon aria-label="Fast Forward">
+                <FastForwardIcon />
               </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+            </Tooltip>
+            <ButtonGroup aria-label="small outlined button group">
+              <Button disabled={rate === 1} onClick={() => { FastRewind() }}><RemoveIcon /></Button>
+              <Button disabled={rate === 5} onClick={() => { FastForward() }}><AddIcon /></Button>
+            </ButtonGroup>
+          </ListItem>
+
+          <ListItem>
+            <Tooltip title="Compliance Rate" placement="left">
+              <ListItemIcon aria-label="Compliance Rate">
+                <TimerIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={complianceRate + "%"} />
+          </ListItem>
+
+          <ListItem>
+            <Tooltip title="Distance Travelled" placement="left">
+              <ListItemIcon aria-label="Distance Travelled">
+                <DirectionsRunIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={distanceTravelled.toFixed(2) + " KM"} />
+          </ListItem>
         </List>
+
+        <Divider />
+
       </Drawer>
     </div>
   );
