@@ -15,7 +15,7 @@ import Slider from '@material-ui/core/Slider';
 import WorkIcon from '@material-ui/icons/Work';
 import React from "react";
 
-const drawerWidth = 255;
+const drawerWidth = 275;
 
 interface IProps {
   currentDateTime: Date,
@@ -179,7 +179,7 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, dis
                 <WorkIcon />
               </ListItemIcon>
             </Tooltip>
-            <ListItemText primary={timeSpentOnJob + " Mins on Job"} />
+            <ListItemText primary={timeSpentOnJob + " Work Minutes"} />
           </ListItem>
         </List>
 
