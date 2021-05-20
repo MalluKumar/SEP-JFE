@@ -13,6 +13,7 @@ const App = () => {
     const [distanceTravelled, setDistance] = useState<number>(0);
     const [complianceRate, setCompliance] = useState<number>(100);
     const [jobsOnTime, setJobsOnTime] = useState<number>(0);
+    const [timeSpentOnJob, setTimeSpentOnJob] = useState<number>(0);
 
     const updateJob = (job: JobData) => {
         let jobs = jobData;
@@ -30,10 +31,14 @@ const App = () => {
         setDistance(distanceTravelled + (Number(distance) / 1000));
     }
 
-    const updateComplianceRate = (onTime: boolean) => {
+    const updateTimeSpentOnJob = (jobTime: number) => {
+        setTimeSpentOnJob(timeSpentOnJob + Number(jobTime));
+    }
+
+    const updateComplianceRate = (exceedsCompliance: boolean) => {
         let onTimeJobs = jobsOnTime;
 
-        if (!onTime) {
+        if (exceedsCompliance) {
             onTimeJobs -= 1;
             setJobsOnTime(onTimeJobs);
         }
@@ -43,6 +48,7 @@ const App = () => {
 
     const functionObj: FunctionObj = {
         updateDistance: updateDistance,
+        updateTimeSpentOnJob: updateTimeSpentOnJob,
         updateJob: updateJob,
         updatePath: updatePath,
         updateComplianceRate: updateComplianceRate
@@ -67,7 +73,7 @@ const App = () => {
                     DistanceTravelled: item["K-DISTANCE IN METERS"],
                     Path: JSON.parse(item["L-POINTS IN TRIP"]),
                     Priority: item["M-JOB PRIORITY"],
-                    Status: "Inactive"
+                    Status: "Scheduled"
                 }
 
                 jobList.push(currentJob);
@@ -99,7 +105,7 @@ const App = () => {
     return (
         <div>
             <JobMap currentDateTime={dateTime} jobs={jobData} functions={functionObj} paths={paths} />
-            <Clock currentDateTime={dateTime} updateTime={setDateTime} compliance={complianceRate} distance={distanceTravelled} />
+            <Clock jobData={jobData} currentDateTime={dateTime} updateTime={setDateTime} compliance={complianceRate} distance={distanceTravelled} timeSpentOnJob={timeSpentOnJob} />
             {/* <button id="button" onClick={(e) => { console.log(jobData) }} >Show State Data</button> */}
         </div>
     );

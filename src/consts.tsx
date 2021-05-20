@@ -20,7 +20,7 @@ export interface JobDict<JobData> {
     Value: JobData
 }
 
-export type JobStatus = "Complete" | "In Progress" | "Travelling" | "Inactive"
+export type JobStatus = "Complete" | "In Progress" | "Travelling" | "Inactive" | "Scheduled"
 
 export interface CoordPoint {
     latitude: number,
@@ -39,6 +39,7 @@ export interface Job {
 
 export interface FunctionObj {
     updateDistance: Function,
+    updateTimeSpentOnJob: Function,
     updateJob: Function,
     updatePath: Function,
     updateComplianceRate: Function
