@@ -92,9 +92,9 @@ const JobMap = (props: IMapProps) => {
         )
     }
 
-    useEffect(() => {
-        showActiveJobs();
-    }, [props.jobs]);
+    // useEffect(() => {
+    //     showActiveJobs();
+    // }, [props.jobs]);
 
 
     return (

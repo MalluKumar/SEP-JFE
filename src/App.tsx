@@ -95,7 +95,7 @@ const App = () => {
 
     useEffect(() => {
         // d3 for reading csv
-        d3.csv(`${process.env.PUBLIC_URL}/data1.csv`).then(function (data: any): void {
+        d3.csv(`${process.env.PUBLIC_URL}/data2.csv`).then(function (data: any): void {
             castData(data);
         }).catch(function (err) {
             throw err;
