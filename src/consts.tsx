@@ -11,10 +11,16 @@ export interface JobData {
     EndTime: Date,
     DistanceTravelled: number,
     Path: CoordPoint[],
-    Priority: string
+    Priority: string,
+    Status: JobStatus,
 }
 
-export type JobStatus = "Complete" | "Incomplete"
+export interface JobDict<JobData> {
+    JobID: number,
+    Value: JobData
+}
+
+export type JobStatus = "Complete" | "In Progress" | "Travelling" | "Inactive" | "Scheduled"
 
 export interface CoordPoint {
     latitude: number,
@@ -28,6 +34,13 @@ export interface Job {
     currentLon: number,
     endLat: number,
     endLon: number,
-    status: JobStatus,
     directionArray: number[][],
+}
+
+export interface FunctionObj {
+    updateDistance: Function,
+    updateTimeSpentOnJob: Function,
+    updateJob: Function,
+    updatePath: Function,
+    updateComplianceRate: Function
 }

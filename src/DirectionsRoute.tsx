@@ -1,20 +1,20 @@
-
 import { Icon } from 'leaflet';
 //@ts-ignore
 import { antPath } from 'leaflet-ant-path';
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Marker, Popup, useMap } from "react-leaflet";
-import { Job } from "./consts";
+import { CoordPoint, FunctionObj, JobData } from "./consts";
 
 // props interface
 interface IDirectionProps {
-    job: Job,
-    travelling: boolean,
+    job: JobData,
     oldPath: any,
-    updatePath: Function
+    currentDateTime: Date,
+    functions: FunctionObj,
+    remainingCoordinates: CoordPoint[]
 }
 
-function DirectionsRoute(props: IDirectionProps) {
+const DirectionsRoute = (props: IDirectionProps) => {
     // leaflet map instance import
     const map = useMap();
 
@@ -54,44 +54,58 @@ function DirectionsRoute(props: IDirectionProps) {
         "fitSelectedRoutes": true
     };
 
+    let job = props.job;
+    let currentLat = props.remainingCoordinates[0].latitude;
+    let currentLon = props.remainingCoordinates[0].longitude;
+    let endLat = job.Path[job.Path.length - 1].latitude
+    let endLon = job.Path[job.Path.length - 1].longitude;
+
     useEffect(() => {
-        if (props.travelling) {
-            var newPath = antPath(props.job.directionArray, pathOptions);
+        if (job.Status === "Travelling") {
+            let directionArray: number[][] = [];
+            props.remainingCoordinates.forEach(row => {
+                directionArray.push([row.latitude, row.longitude]);
+            });
+
+            var newPath = antPath(directionArray, pathOptions);
             map.addLayer(newPath);
+
+            props.functions.updatePath(props.job.JobID, newPath);
         }
 
         if (props.oldPath != null) {
             map.removeLayer(props.oldPath);
         }
         else {
-            if (props.travelling) {
-                map.fitBounds(newPath.getBounds())
+            if (job.Status === "Travelling") {
+                map.fitBounds(newPath.getBounds());
             }
         }
-
-        props.updatePath(props.job.JobID, newPath);
-    }, [props.job.directionArray]);
+    }, [props.remainingCoordinates]);
 
 
-    if (props.travelling) {
+    if (job.Status === "Travelling") {
         return <>
             {/* GST Marker */}
-            <Marker draggable={true} position={[props.job.currentLat, props.job.currentLon]} icon={gstIcon}>
-                <Popup>{'GST ID: ' + props.job.GSTID + ', Location: ' + [props.job.currentLat, props.job.currentLon]}</Popup>
+            <Marker draggable={true} position={[currentLat, currentLon]} icon={gstIcon}>
+                <Popup>{'GST ID: ' + props.job.GSTID + ', Location: ' + [currentLat, currentLon]}</Popup>
             </Marker>
             {/* Travelling to Location Marker */}
-            <Marker draggable={true} position={[props.job.endLat, props.job.endLon]} icon={jobIcon}>
-                <Popup>{'Job ID: ' + props.job.JobID + ', Location: ' + [props.job.endLat, props.job.endLon]}</Popup>
+            <Marker draggable={true} position={[endLat, endLon]} icon={jobIcon}>
+                <Popup>{'Job ID: ' + props.job.JobID + ', Location: ' + [endLat, endLon]}</Popup>
+            </Marker>
+        </>
+    }
+    else if (job.Status === "In Progress") {
+        return <>
+            {/* Job In Progress Location Marker */}
+            <Marker draggable={true} position={[endLat, endLon]} icon={activeIcon}>
+                <Popup>{'Job ID: ' + props.job.JobID + ', Location: ' + [endLat, endLon]}</Popup>
             </Marker>
         </>
     }
     else {
-        return <>
-            {/* Job In Progress Location Marker */}
-            <Marker draggable={true} position={[props.job.endLat, props.job.endLon]} icon={activeIcon}>
-                <Popup>{'Job ID: ' + props.job.JobID + ', Location: ' + [props.job.endLat, props.job.endLon]}</Popup>
-            </Marker>
-        </>
+        return <></>
     }
 }
 

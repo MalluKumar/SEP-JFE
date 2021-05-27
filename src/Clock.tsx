@@ -1,26 +1,24 @@
 import React from "react";
+import { JobData } from "./consts";
 import { Sidebar } from "./Sidebar";
 
 interface IClockProps {
-  currentDateTime: Date;
-  updateTime: Function;
+  currentDateTime: Date,
+  updateTime: Function,
+  compliance: number,
+  distance: number,
+  timeSpentOnJob: number
+  jobData: JobData[]
 }
 
 export class Clock extends React.Component<IClockProps> {
   timerID: number;
-
-  dateStyle: React.CSSProperties = {
-    position: "absolute",
-    top: 0,
-    right: 30,
-    zIndex: 1000,
-    fontSize: 16,
-    fontWeight: "bold",
-  };
+  rate: number;
 
   constructor(props: IClockProps) {
     super(props);
     this.timerID = 0;
+    this.rate = 1;
   }
 
   componentDidMount() {
@@ -31,16 +29,32 @@ export class Clock extends React.Component<IClockProps> {
     clearInterval(this.timerID);
   }
 
+  updateRate = (speed: number) => {
+    this.rate = speed;
+  }
+
   tick() {
-    // this.props.updateTime(new Date(this.props.currentDateTime.setSeconds(this.props.currentDateTime.getSeconds() + 1)))
-    // Currently set to increment + 1 minute.
-    this.props.updateTime(new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 1)))
+    if (this.rate === 1) {
+      this.props.updateTime(new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 1)))
+    }
+    else if (this.rate === 2) {
+      this.props.updateTime(new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 5)))
+    }
+    else if (this.rate === 3) {
+      this.props.updateTime(new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 15)))
+    }
+    else if (this.rate === 4) {
+      this.props.updateTime(new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 30)))
+    }
+    else if (this.rate === 5) {
+      this.props.updateTime(new Date(this.props.currentDateTime.setHours(this.props.currentDateTime.getHours() + 1)))
+    }
   }
 
   render() {
     return (
       <div>
-        <Sidebar currentDateTime={this.props.currentDateTime} />
+        <Sidebar currentDateTime={this.props.currentDateTime} complianceRate={this.props.compliance} distanceTravelled={this.props.distance} timeSpentOnJob={this.props.timeSpentOnJob} updateRate={this.updateRate} />
       </div>
     );
   }

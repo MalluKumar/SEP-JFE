@@ -1,18 +1,28 @@
-import React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import { Tooltip } from "@material-ui/core";
+import Divider from "@material-ui/core/Divider";
 import Drawer from "@material-ui/core/Drawer";
 import List from "@material-ui/core/List";
-import Divider from "@material-ui/core/Divider";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
-import MailIcon from "@material-ui/icons/Mail";
+import { makeStyles } from "@material-ui/core/styles";
+import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import FastForwardIcon from '@material-ui/icons/FastForward';
+import ScheduleIcon from '@material-ui/icons/Schedule';
+import TimerIcon from '@material-ui/icons/Timer';
+import Slider from '@material-ui/core/Slider';
+import WorkIcon from '@material-ui/icons/Work';
+import React from "react";
 
-const drawerWidth = 240;
+const drawerWidth = 275;
 
 interface IProps {
-  currentDateTime: Date;
+  currentDateTime: Date,
+  complianceRate: number,
+  distanceTravelled: number,
+  timeSpentOnJob: number
+  updateRate: Function
 }
 
 const useStyles = makeStyles((theme) => ({
@@ -38,12 +48,62 @@ const useStyles = makeStyles((theme) => ({
   content: {
     flexGrow: 1,
     backgroundColor: theme.palette.background.default,
-    padding: theme.spacing(3),
+    padding: theme.spacing(3)
   },
 }));
 
-export const Sidebar: React.FC<IProps> = ({ currentDateTime }) => {
+export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, distanceTravelled, timeSpentOnJob, updateRate }) => {
   const classes = useStyles();
+
+  const handleChange = (event: any, newValue: number | number[]) => {
+    updateRate(newValue);
+  };
+
+  const marks = [
+    {
+      value: 1,
+      label: '1x',
+    },
+    {
+      value: 2,
+      label: '5x',
+    },
+    {
+      value: 3,
+      label: '15x',
+    },
+    {
+      value: 4,
+      label: '30x',
+    },
+    {
+      value: 5,
+      label: '60x',
+    },
+  ];
+
+  function valuetext(value: number) {
+    let label = 1;
+
+    if (value === 1) {
+      label = 1;
+    }
+    else if (value === 2) {
+      label = 5;
+    }
+    else if (value === 3) {
+      label = 15;
+    }
+    else if (value === 4) {
+      label = 30;
+    }
+    else if (value === 5) {
+      label = 60;
+    }
+
+    return label;
+  }
+
   return (
     <div className={classes.root}>
       <Drawer
@@ -54,33 +114,77 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime }) => {
         }}
         anchor="right"
       >
-        <h2 className={classes.dateStyle}>
-          {currentDateTime && currentDateTime.toLocaleDateString()}
-          <br />
-          {currentDateTime && currentDateTime.toLocaleTimeString()}
-        </h2>
-        <Divider />
         <List>
-          {["Fast Foward Time", "Compliance", "80%", "Total Distance"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+          <ListItem>
+            <Tooltip title="Date" placement="left">
+              <ListItemIcon aria-label="Date">
+                <CalendarTodayIcon />
               </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+            </Tooltip>
+            <ListItemText primary={currentDateTime.toLocaleDateString()} />
+          </ListItem>
+          <ListItem>
+            <Tooltip title="Current Time" placement="left">
+              <ListItemIcon aria-label="Current Time">
+                <ScheduleIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={currentDateTime.toLocaleTimeString()} />
+          </ListItem>
         </List>
+
         <Divider />
+
         <List>
-          {["Average Time", "Idle time"].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+          <ListItem>
+            <Tooltip title="Fast Forward" placement="left">
+              <ListItemIcon aria-label="Fast Forward">
+                <FastForwardIcon />
               </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
+            </Tooltip>
+            <Slider
+              defaultValue={1}
+              min={1}
+              step={1}
+              max={5}
+              onChange={handleChange}
+              scale={(x) => valuetext(x)}
+              valueLabelDisplay="auto"
+              aria-labelledby="discrete-slider-always"
+              marks={marks}
+            />
+          </ListItem>
+
+          <ListItem>
+            <Tooltip title="Compliance Rate" placement="left">
+              <ListItemIcon aria-label="Compliance Rate">
+                <TimerIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={complianceRate + "% Compliance"} />
+          </ListItem>
+
+          <ListItem>
+            <Tooltip title="Distance Travelled" placement="left">
+              <ListItemIcon aria-label="Distance Travelled">
+                <DirectionsRunIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={distanceTravelled.toFixed(2) + " KM Travelled"} />
+          </ListItem>
+
+          <ListItem>
+            <Tooltip title="Time Spent Working" placement="left">
+              <ListItemIcon aria-label="Time Spent Working">
+                <WorkIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={timeSpentOnJob + " Work Minutes"} />
+          </ListItem>
         </List>
+
+        <Divider />
+
       </Drawer>
     </div>
   );
