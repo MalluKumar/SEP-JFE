@@ -5,9 +5,9 @@ import { Sidebar } from "./Sidebar";
 interface IClockProps {
   currentDateTime: Date,
   updateTime: Function,
-  compliance: number,
-  distance: number,
-  timeSpentOnJob: number
+  complianceRate: number,
+  distanceTravelled: number,
+  timeOnJobs: number
   jobData: JobData[]
 }
 
@@ -54,7 +54,7 @@ export class Clock extends React.Component<IClockProps> {
   render() {
     return (
       <div>
-        <Sidebar currentDateTime={this.props.currentDateTime} complianceRate={this.props.compliance} distanceTravelled={this.props.distance} timeSpentOnJob={this.props.timeSpentOnJob} updateRate={this.updateRate} />
+        <Sidebar currentDateTime={this.props.currentDateTime} complianceRate={this.props.complianceRate} distanceTravelled={this.props.distanceTravelled} timeOnJobs={this.props.timeOnJobs} updateRate={this.updateRate} />
       </div>
     );
   }

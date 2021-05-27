@@ -20,27 +20,30 @@ export interface JobDict<JobData> {
     Value: JobData
 }
 
-export type JobStatus = "Complete" | "In Progress" | "Travelling" | "Inactive" | "Scheduled"
+export type JobStatus = "Complete" | "In Progress" | "Travelling" | "Scheduled"
 
 export interface CoordPoint {
     latitude: number,
     longitude: number,
 }
 
-export interface Job {
+export interface ActiveJob {
     JobID: number,
     GSTID: number,
+    Status: JobStatus,
     currentLat: number,
     currentLon: number,
     endLat: number,
     endLon: number,
-    directionArray: number[][],
+    oldPath: any,
+    remainingCoordinates: CoordPoint[]
 }
 
 export interface FunctionObj {
-    updateDistance: Function,
-    updateTimeSpentOnJob: Function,
+    setComplianceRate: Function
+    setDistanceTravelled: Function,
+    setTimeOnJobs: Function,
     updateJob: Function,
     updatePath: Function,
-    updateComplianceRate: Function
+
 }

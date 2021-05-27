@@ -1,45 +1,47 @@
-import { Icon } from 'leaflet';
+import DriveEtaIcon from '@material-ui/icons/DriveEta';
+import HomeWorkIcon from '@material-ui/icons/HomeWork';
+import WorkIcon from '@material-ui/icons/Work';
+import { DivIcon } from 'leaflet';
 //@ts-ignore
 import { antPath } from 'leaflet-ant-path';
 import { useEffect } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { Marker, Popup, useMap } from "react-leaflet";
-import { CoordPoint, FunctionObj, JobData } from "./consts";
+import { ActiveJob, FunctionObj } from "./consts";
 
 // props interface
 interface IDirectionProps {
-    job: JobData,
-    oldPath: any,
+    job: ActiveJob,
     currentDateTime: Date,
     functions: FunctionObj,
-    remainingCoordinates: CoordPoint[]
 }
 
 const DirectionsRoute = (props: IDirectionProps) => {
     // leaflet map instance import
     const map = useMap();
 
-    const jobIcon: Icon = new Icon({
-        className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
-        iconUrl: `${process.env.PUBLIC_URL}/Job.png`,
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
+    const jobIcon: DivIcon = new DivIcon({
+        className: 'material-icons',
+        html: renderToStaticMarkup(<HomeWorkIcon style={{ fontSize: 30 }} />),
+        iconSize: [30, 30],
+        iconAnchor: [15, 20],
+        popupAnchor: [3, -20],
     });
 
-    const gstIcon: Icon = new Icon({
-        className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
-        iconUrl: `${process.env.PUBLIC_URL}/GST.png`,
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
+    const gstIcon: DivIcon = new DivIcon({
+        className: 'material-icons',
+        html: renderToStaticMarkup(<DriveEtaIcon style={{ fontSize: 30 }} />),
+        iconSize: [30, 30],
+        iconAnchor: [15, 20],
+        popupAnchor: [3, -20],
     });
 
-    const activeIcon: Icon = new Icon({
-        className: 'leaflet-marker-icon leaflet-zoom-animated leaflet-interactive leaflet-marker-draggable',
-        iconUrl: `${process.env.PUBLIC_URL}/Person.png`,
-        iconSize: [25, 41],
-        iconAnchor: [12, 41],
-        popupAnchor: [1, -34],
+    const jobInProgressIcon: DivIcon = new DivIcon({
+        className: 'material-icons',
+        html: renderToStaticMarkup(<WorkIcon style={{ fontSize: 30 }} />),
+        iconSize: [30, 30],
+        iconAnchor: [15, 20],
+        popupAnchor: [3, -20],
     });
 
     const pathOptions = {
@@ -55,15 +57,12 @@ const DirectionsRoute = (props: IDirectionProps) => {
     };
 
     let job = props.job;
-    let currentLat = props.remainingCoordinates[0].latitude;
-    let currentLon = props.remainingCoordinates[0].longitude;
-    let endLat = job.Path[job.Path.length - 1].latitude
-    let endLon = job.Path[job.Path.length - 1].longitude;
 
     useEffect(() => {
+
         if (job.Status === "Travelling") {
             let directionArray: number[][] = [];
-            props.remainingCoordinates.forEach(row => {
+            job.remainingCoordinates.forEach(row => {
                 directionArray.push([row.latitude, row.longitude]);
             });
 
@@ -73,34 +72,29 @@ const DirectionsRoute = (props: IDirectionProps) => {
             props.functions.updatePath(props.job.JobID, newPath);
         }
 
-        if (props.oldPath != null) {
-            map.removeLayer(props.oldPath);
+        if (job.oldPath != null) {
+            map.removeLayer(job.oldPath);
         }
-        else {
-            if (job.Status === "Travelling") {
-                map.fitBounds(newPath.getBounds());
-            }
-        }
-    }, [props.remainingCoordinates]);
+    }, [job.remainingCoordinates]);
 
 
     if (job.Status === "Travelling") {
         return <>
             {/* GST Marker */}
-            <Marker draggable={true} position={[currentLat, currentLon]} icon={gstIcon}>
-                <Popup>{'GST ID: ' + props.job.GSTID + ', Location: ' + [currentLat, currentLon]}</Popup>
+            <Marker draggable={true} position={[job.currentLat, job.currentLon]} icon={gstIcon}>
+                <Popup>{'GST ID: ' + job.GSTID + ', Location: ' + [job.currentLat, job.currentLon]}</Popup>
             </Marker>
             {/* Travelling to Location Marker */}
-            <Marker draggable={true} position={[endLat, endLon]} icon={jobIcon}>
-                <Popup>{'Job ID: ' + props.job.JobID + ', Location: ' + [endLat, endLon]}</Popup>
+            <Marker draggable={true} position={[job.endLat, job.endLon]} icon={jobIcon}>
+                <Popup>{'Job ID: ' + job.JobID + ', Location: ' + [job.endLat, job.endLon]}</Popup>
             </Marker>
         </>
     }
     else if (job.Status === "In Progress") {
         return <>
             {/* Job In Progress Location Marker */}
-            <Marker draggable={true} position={[endLat, endLon]} icon={activeIcon}>
-                <Popup>{'Job ID: ' + props.job.JobID + ', Location: ' + [endLat, endLon]}</Popup>
+            <Marker draggable={true} position={[job.endLat, job.endLon]} icon={jobInProgressIcon}>
+                <Popup>{'Job ID: ' + job.JobID + ', Location: ' + [job.endLat, job.endLon]}</Popup>
             </Marker>
         </>
     }
