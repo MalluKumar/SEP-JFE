@@ -6,15 +6,25 @@ import { FunctionObj, JobData } from './consts';
 import JobMap from './Map';
 
 const App = () => {
-    // react hooks
-    const [jobData, setJobData] = useState<JobData[]>([]);
-    const [dateTime, setDateTime] = useState<Date>(new Date());
-    const [paths, setPath] = useState(new Map<number, any>());
-    const [distanceTravelled, setDistance] = useState<number>(0);
-    const [complianceRate, setCompliance] = useState<number>(100);
-    const [jobsOnTime, setJobsOnTime] = useState<number>(0);
-    const [timeSpentOnJob, setTimeSpentOnJob] = useState<number>(0);
 
+    // Holds the job data loaded from CSV
+    const [jobData, setJobData] = useState<JobData[]>([]);
+    // The current time in the simulation
+    const [dateTime, setDateTime] = useState<Date>(new Date());
+    // The paths currently displayed on the map
+    const [paths, setPath] = useState(new Map<number, any>());
+    // The total distance travelled in the simulation
+    const [distanceTravelled, setDistanceTravelled] = useState<number>(0);
+    // Number of jobs that arrived at the job < 30 minutes
+    const [arrivedOnTime, setArrivedOnTime] = useState<number>(0);
+    // Total number of GSTS that arrived at a job
+    const [arrivedAtJob, setArrivedAtJob] = useState<number>(0);
+    // The compliance rate over the course of the simulation
+    const [complianceRate, setComplianceRate] = useState<number>(0);
+    // Total time spent working on jobs
+    const [timeOnJobs, setTimeOnJobs] = useState<number>(0);
+
+    // Helper methods
     const updateJob = (job: JobData) => {
         let jobs = jobData;
         let index = jobData.indexOf(job);
@@ -28,30 +38,31 @@ const App = () => {
     }
 
     const updateDistance = (distance: number) => {
-        setDistance(distanceTravelled + (Number(distance) / 1000));
+        setDistanceTravelled(distanceTravelled + (Number(distance) / 1000));
     }
 
-    const updateTimeSpentOnJob = (jobTime: number) => {
-        setTimeSpentOnJob(timeSpentOnJob + Number(jobTime));
-    }
+    const updateComplianceRate = (onTime: number, atJob: number) => {
+        let totalAtJob = arrivedAtJob + atJob;
+        let totalOnTime = arrivedOnTime + onTime;
 
-    const updateComplianceRate = (exceedsCompliance: boolean) => {
-        let onTimeJobs = jobsOnTime;
-
-        if (exceedsCompliance) {
-            onTimeJobs -= 1;
-            setJobsOnTime(onTimeJobs);
+        if (totalOnTime > 0) {
+            setComplianceRate(Number((totalOnTime / totalAtJob)) * 100);
         }
 
-        setCompliance((onTimeJobs / jobData.length) * 100);
+        setArrivedAtJob(totalAtJob);
+        setArrivedOnTime(totalOnTime);
+    }
+
+    const updateTimeOnJobs = (jobTime: number) => {
+        setTimeOnJobs(timeOnJobs + Number(jobTime));
     }
 
     const functionObj: FunctionObj = {
-        updateDistance: updateDistance,
-        updateTimeSpentOnJob: updateTimeSpentOnJob,
+        setComplianceRate: updateComplianceRate,
+        setDistanceTravelled: updateDistance,
+        setTimeOnJobs: updateTimeOnJobs,
         updateJob: updateJob,
-        updatePath: updatePath,
-        updateComplianceRate: updateComplianceRate
+        updatePath: updatePath
     }
 
     function castData(rawData: any[]) {
@@ -80,7 +91,7 @@ const App = () => {
             }
         });
 
-        var lowest: Date = new Date(new Date().getUTCFullYear(), 12, 31);
+        var lowest: Date = new Date(new Date().getUTCFullYear(), 11, 31);
         var tmp;
 
         for (var i = jobList.length - 1; i >= 0; i--) {
@@ -90,7 +101,6 @@ const App = () => {
 
         setDateTime(lowest);
         setJobData(jobList);
-        setJobsOnTime(jobList.length);
     }
 
     useEffect(() => {
@@ -105,8 +115,7 @@ const App = () => {
     return (
         <div>
             <JobMap currentDateTime={dateTime} jobs={jobData} functions={functionObj} paths={paths} />
-            <Clock jobData={jobData} currentDateTime={dateTime} updateTime={setDateTime} compliance={complianceRate} distance={distanceTravelled} timeSpentOnJob={timeSpentOnJob} />
-            {/* <button id="button" onClick={(e) => { console.log(jobData) }} >Show State Data</button> */}
+            <Clock jobData={jobData} currentDateTime={dateTime} updateTime={setDateTime} complianceRate={complianceRate} distanceTravelled={distanceTravelled} timeOnJobs={timeOnJobs} />
         </div>
     );
 }

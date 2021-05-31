@@ -5,13 +5,13 @@ import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import Slider from '@material-ui/core/Slider';
 import { makeStyles } from "@material-ui/core/styles";
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
-import DirectionsRunIcon from '@material-ui/icons/DirectionsRun';
+import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import FastForwardIcon from '@material-ui/icons/FastForward';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import TimerIcon from '@material-ui/icons/Timer';
-import Slider from '@material-ui/core/Slider';
 import WorkIcon from '@material-ui/icons/Work';
 import React from "react";
 
@@ -21,7 +21,7 @@ interface IProps {
   currentDateTime: Date,
   complianceRate: number,
   distanceTravelled: number,
-  timeSpentOnJob: number
+  timeOnJobs: number
   updateRate: Function
 }
 
@@ -52,10 +52,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, distanceTravelled, timeSpentOnJob, updateRate }) => {
+export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, distanceTravelled, timeOnJobs: timeSpentOnJob, updateRate }) => {
   const classes = useStyles();
 
-  const handleChange = (event: any, newValue: number | number[]) => {
+  const handleChange = (_event: any, newValue: number | number[]) => {
     updateRate(newValue);
   };
 
@@ -161,16 +161,16 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, dis
                 <TimerIcon />
               </ListItemIcon>
             </Tooltip>
-            <ListItemText primary={complianceRate + "% Compliance"} />
+            <ListItemText primary={complianceRate.toFixed(0) + "% Compliance"} />
           </ListItem>
 
           <ListItem>
             <Tooltip title="Distance Travelled" placement="left">
               <ListItemIcon aria-label="Distance Travelled">
-                <DirectionsRunIcon />
+                <DriveEtaIcon />
               </ListItemIcon>
             </Tooltip>
-            <ListItemText primary={distanceTravelled.toFixed(2) + " KM Travelled"} />
+            <ListItemText primary={distanceTravelled.toFixed(0) + " KM Travelled"} />
           </ListItem>
 
           <ListItem>
