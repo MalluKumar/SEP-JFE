@@ -7,7 +7,8 @@ interface IClockProps {
   updateTime: Function,
   complianceRate: number,
   distanceTravelled: number,
-  timeOnJobs: number
+  timeOnJobs: number,
+  jobsCompleted: number,
   jobData: JobData[]
 }
 
@@ -54,7 +55,7 @@ export class Clock extends React.Component<IClockProps> {
   render() {
     return (
       <div>
-        <Sidebar currentDateTime={this.props.currentDateTime} complianceRate={this.props.complianceRate} distanceTravelled={this.props.distanceTravelled} timeOnJobs={this.props.timeOnJobs} updateRate={this.updateRate} />
+        <Sidebar currentDateTime={this.props.currentDateTime} complianceRate={this.props.complianceRate} distanceTravelled={this.props.distanceTravelled} timeOnJobs={this.props.timeOnJobs} jobsCompleted={this.props.jobsCompleted} updateRate={this.updateRate} />
       </div>
     );
   }

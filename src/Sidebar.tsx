@@ -8,6 +8,7 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Slider from '@material-ui/core/Slider';
 import { makeStyles } from "@material-ui/core/styles";
 import CalendarTodayIcon from '@material-ui/icons/CalendarToday';
+import CheckIcon from '@material-ui/icons/Check';
 import DriveEtaIcon from '@material-ui/icons/DriveEta';
 import FastForwardIcon from '@material-ui/icons/FastForward';
 import ScheduleIcon from '@material-ui/icons/Schedule';
@@ -21,7 +22,8 @@ interface IProps {
   currentDateTime: Date,
   complianceRate: number,
   distanceTravelled: number,
-  timeOnJobs: number
+  timeOnJobs: number,
+  jobsCompleted: number,
   updateRate: Function
 }
 
@@ -52,7 +54,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, distanceTravelled, timeOnJobs: timeSpentOnJob, updateRate }) => {
+export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, distanceTravelled, timeOnJobs: timeSpentOnJob, updateRate, jobsCompleted }) => {
   const classes = useStyles();
 
   const handleChange = (_event: any, newValue: number | number[]) => {
@@ -180,6 +182,15 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, dis
               </ListItemIcon>
             </Tooltip>
             <ListItemText primary={timeSpentOnJob + " Work Minutes"} />
+          </ListItem>
+
+          <ListItem>
+            <Tooltip title="Total Jobs Completed" placement="left">
+              <ListItemIcon aria-label="Total Jobs Completed">
+                <CheckIcon />
+              </ListItemIcon>
+            </Tooltip>
+            <ListItemText primary={jobsCompleted + " Jobs Completed"} />
           </ListItem>
         </List>
 

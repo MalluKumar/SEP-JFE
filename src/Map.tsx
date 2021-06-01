@@ -18,6 +18,7 @@ const JobMap = (props: IMapProps) => {
     var arrivedOnTime: number = 0;
     var arrivedAtJob: number = 0;
     var timeOnJobs: number = 0;
+    var jobsCompleted: number = 0;
 
     const baseMap: any = <TileLayer
         attribution='&copy; <a href="&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
@@ -26,12 +27,12 @@ const JobMap = (props: IMapProps) => {
     function updateJobs() {
         let jobList = [];
         for (var job of props.jobs) {
-            let remainingCoordinates = job.Path.map(coord => coord);
-            let modified = false;
-            let travelEndTime = new Date(job.EndTime);
-            travelEndTime.setMinutes(travelEndTime.getMinutes() - job.JobDuration);
-
             if (job.Status !== "Complete") {
+                let remainingCoordinates = job.Path.map(coord => coord);
+                let modified = false;
+                let travelEndTime = new Date(job.EndTime);
+                travelEndTime.setMinutes(travelEndTime.getMinutes() - job.JobDuration);
+
                 // Update job details if travelling
                 if (travelEndTime > props.currentDateTime && job.StartTime <= props.currentDateTime) {
                     if (job.Status === "Scheduled") {
@@ -77,31 +78,35 @@ const JobMap = (props: IMapProps) => {
                     job.Status = "Complete"
                     modified = true;
                     timeOnJobs += Number(job.JobDuration);
+                    jobsCompleted += 1;
                 }
 
                 if (modified) {
                     props.functions.updateJob(job);
                 }
 
-                let currentJob: ActiveJob = {
-                    GSTID: job.GSTID,
-                    JobID: job.JobID,
-                    Status: job.Status,
-                    currentLat: remainingCoordinates[0].latitude,
-                    currentLon: remainingCoordinates[0].longitude,
-                    endLat: job.Path[job.Path.length - 1].latitude,
-                    endLon: job.Path[job.Path.length - 1].longitude,
-                    remainingCoordinates: remainingCoordinates,
-                    oldPath: props.paths.get(job.JobID)
-                };
+                if (job.Status != "Scheduled") {
+                    let currentJob: ActiveJob = {
+                        GSTID: job.GSTID,
+                        JobID: job.JobID,
+                        Status: job.Status,
+                        currentLat: remainingCoordinates[0].latitude,
+                        currentLon: remainingCoordinates[0].longitude,
+                        endLat: job.Path[job.Path.length - 1].latitude,
+                        endLon: job.Path[job.Path.length - 1].longitude,
+                        remainingCoordinates: remainingCoordinates,
+                        oldPath: props.paths.get(job.JobID)
+                    };
 
-                jobList.push(currentJob);
+                    jobList.push(currentJob);
+                }
             }
         }
         setActiveJobs(jobList);
         props.functions.setComplianceRate(arrivedOnTime, arrivedAtJob);
         props.functions.setDistanceTravelled(distanceTravelled);
         props.functions.setTimeOnJobs(timeOnJobs);
+        props.functions.updateCompletedJobs(jobsCompleted);
     }
 
     function showActiveJobs() {

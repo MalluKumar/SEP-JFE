@@ -23,6 +23,8 @@ const App = () => {
     const [complianceRate, setComplianceRate] = useState<number>(0);
     // Total time spent working on jobs
     const [timeOnJobs, setTimeOnJobs] = useState<number>(0);
+    // Total number of Jobs completed
+    const [jobsCompleted, setJobsCompleted] = useState<number>(0);
 
     // Helper methods
     const updateJob = (job: JobData) => {
@@ -57,12 +59,17 @@ const App = () => {
         setTimeOnJobs(timeOnJobs + Number(jobTime));
     }
 
+    const updateCompletedJobs = (numberOfJobs: number) => {
+        setJobsCompleted(jobsCompleted + Number(numberOfJobs));
+    }
+
     const functionObj: FunctionObj = {
         setComplianceRate: updateComplianceRate,
         setDistanceTravelled: updateDistance,
         setTimeOnJobs: updateTimeOnJobs,
         updateJob: updateJob,
-        updatePath: updatePath
+        updatePath: updatePath,
+        updateCompletedJobs: updateCompletedJobs
     }
 
     function castData(rawData: any[]) {
@@ -115,7 +122,7 @@ const App = () => {
     return (
         <div>
             <JobMap currentDateTime={dateTime} jobs={jobData} functions={functionObj} paths={paths} />
-            <Clock jobData={jobData} currentDateTime={dateTime} updateTime={setDateTime} complianceRate={complianceRate} distanceTravelled={distanceTravelled} timeOnJobs={timeOnJobs} />
+            <Clock jobData={jobData} currentDateTime={dateTime} updateTime={setDateTime} complianceRate={complianceRate} distanceTravelled={distanceTravelled} timeOnJobs={timeOnJobs} jobsCompleted={jobsCompleted} />
         </div>
     );
 }

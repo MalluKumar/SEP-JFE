@@ -45,5 +45,5 @@ export interface FunctionObj {
     setTimeOnJobs: Function,
     updateJob: Function,
     updatePath: Function,
-
+    updateCompletedJobs: Function
 }
