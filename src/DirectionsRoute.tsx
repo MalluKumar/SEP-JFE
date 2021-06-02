@@ -20,6 +20,7 @@ const DirectionsRoute = (props: IDirectionProps) => {
     // leaflet map instance import
     const map = useMap();
 
+    // material ui icon for showing job location
     const jobIcon: DivIcon = new DivIcon({
         className: 'material-icons',
         html: renderToStaticMarkup(<HomeWorkIcon style={{ fontSize: 30 }} />),
@@ -28,6 +29,7 @@ const DirectionsRoute = (props: IDirectionProps) => {
         popupAnchor: [3, -20],
     });
 
+    // material ui icon for shpwing GST location
     const gstIcon: DivIcon = new DivIcon({
         className: 'material-icons',
         html: renderToStaticMarkup(<DriveEtaIcon style={{ fontSize: 30 }} />),
@@ -36,6 +38,7 @@ const DirectionsRoute = (props: IDirectionProps) => {
         popupAnchor: [3, -20],
     });
 
+    // material ui icon for showing GST at work
     const jobInProgressIcon: DivIcon = new DivIcon({
         className: 'material-icons',
         html: renderToStaticMarkup(<WorkIcon style={{ fontSize: 30 }} />),
@@ -44,6 +47,7 @@ const DirectionsRoute = (props: IDirectionProps) => {
         popupAnchor: [3, -20],
     });
 
+    // define the properties of path
     const pathOptions = {
         "delay": 800,
         "dashArray": [10, 20],
@@ -59,9 +63,11 @@ const DirectionsRoute = (props: IDirectionProps) => {
     let job = props.job;
 
     useEffect(() => {
-
+        
+        // update the routes based on the remaining coordinate points
         if (job.Status === "Travelling") {
             let directionArray: number[][] = [];
+
             job.remainingCoordinates.forEach(row => {
                 directionArray.push([row.latitude, row.longitude]);
             });
@@ -75,6 +81,7 @@ const DirectionsRoute = (props: IDirectionProps) => {
         if (job.oldPath != null) {
             map.removeLayer(job.oldPath);
         }
+
     }, [job.remainingCoordinates]);
 
 

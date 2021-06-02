@@ -1,3 +1,4 @@
+// define the required fields from csv
 export interface JobData {
     JobID: number,
     GSTID: number,
@@ -27,6 +28,7 @@ export interface CoordPoint {
     longitude: number,
 }
 
+// define the properties of a active job
 export interface ActiveJob {
     JobID: number,
     GSTID: number,

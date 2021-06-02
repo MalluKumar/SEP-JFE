@@ -19,9 +19,11 @@ export class Clock extends React.Component<IClockProps> {
   constructor(props: IClockProps) {
     super(props);
     this.timerID = 0;
+    // initialize the timer to update the time by one minute after each tick
     this.rate = 1;
   }
 
+  // Lifecycle methods after component is rendered
   componentDidMount() {
     this.timerID = window.setInterval(() => this.tick(), 1000);
   }
@@ -34,6 +36,7 @@ export class Clock extends React.Component<IClockProps> {
     this.rate = speed;
   }
 
+  // update the time based on the rate of tick
   tick() {
     if (this.rate === 1) {
       this.props.updateTime(new Date(this.props.currentDateTime.setMinutes(this.props.currentDateTime.getMinutes() + 1)))

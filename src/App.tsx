@@ -72,6 +72,7 @@ const App = () => {
         updateCompletedJobs: updateCompletedJobs
     }
 
+    // extract all the required fields from the csv
     function castData(rawData: any[]) {
         let jobList: JobData[] = [];
 
@@ -101,6 +102,7 @@ const App = () => {
         var lowest: Date = new Date(new Date().getUTCFullYear(), 11, 31);
         var tmp;
 
+        // find the lowest time of a job in csv
         for (var i = jobList.length - 1; i >= 0; i--) {
             tmp = jobList[i].StartTime;
             if (tmp < lowest) lowest = tmp;
@@ -111,7 +113,7 @@ const App = () => {
     }
 
     useEffect(() => {
-        // d3 for reading csv
+        // d3 for reading csv file
         d3.csv(`${process.env.PUBLIC_URL}/data2.csv`).then(function (data: any): void {
             castData(data);
         }).catch(function (err) {

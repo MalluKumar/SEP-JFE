@@ -16,7 +16,7 @@ import TimerIcon from '@material-ui/icons/Timer';
 import WorkIcon from '@material-ui/icons/Work';
 import React from "react";
 
-const drawerWidth = 275;
+const drawerWidth: number = 275;
 
 interface IProps {
   currentDateTime: Date,
@@ -114,8 +114,7 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, dis
         classes={{
           paper: classes.drawerPaper,
         }}
-        anchor="right"
-      >
+        anchor="right">
         <List>
           <ListItem>
             <Tooltip title="Date" placement="left">
@@ -134,7 +133,6 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, dis
             <ListItemText primary={currentDateTime.toLocaleTimeString()} />
           </ListItem>
         </List>
-
         <Divider />
 
         <List>
@@ -192,10 +190,9 @@ export const Sidebar: React.FC<IProps> = ({ currentDateTime, complianceRate, dis
             </Tooltip>
             <ListItemText primary={jobsCompleted + " Jobs Completed"} />
           </ListItem>
+
         </List>
-
         <Divider />
-
       </Drawer>
     </div>
   );

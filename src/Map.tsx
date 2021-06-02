@@ -12,6 +12,7 @@ interface IMapProps {
 }
 
 const JobMap = (props: IMapProps) => {
+
     const [activeJobs, setActiveJobs] = useState<ActiveJob[]>([]);
     const centrePoint: LatLngExpression = [-33.900, 151.150] // Sydney coordinates
     var distanceTravelled: number = 0;
@@ -20,12 +21,14 @@ const JobMap = (props: IMapProps) => {
     var timeOnJobs: number = 0;
     var jobsCompleted: number = 0;
 
+    // get the cartodb positron base map
     const baseMap: any = <TileLayer
         attribution='&copy; <a href="&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
 
     function updateJobs() {
         let jobList = [];
+
         for (var job of props.jobs) {
             if (job.Status !== "Complete") {
                 let remainingCoordinates = job.Path.map(coord => coord);
@@ -35,6 +38,7 @@ const JobMap = (props: IMapProps) => {
 
                 // Update job details if travelling
                 if (travelEndTime > props.currentDateTime && job.StartTime <= props.currentDateTime) {
+
                     if (job.Status === "Scheduled") {
                         job.Status = "Travelling";
                         modified = true;
@@ -74,6 +78,7 @@ const JobMap = (props: IMapProps) => {
                     }
                 }
 
+                // update the job when job completes
                 if (props.currentDateTime >= job.EndTime && job.Status === "In Progress") {
                     job.Status = "Complete"
                     modified = true;
@@ -102,6 +107,7 @@ const JobMap = (props: IMapProps) => {
                 }
             }
         }
+
         setActiveJobs(jobList);
         props.functions.setComplianceRate(arrivedOnTime, arrivedAtJob);
         props.functions.setDistanceTravelled(distanceTravelled);
@@ -109,6 +115,7 @@ const JobMap = (props: IMapProps) => {
         props.functions.updateCompletedJobs(jobsCompleted);
     }
 
+    // display the directions of the active jobs
     function showActiveJobs() {
         return (
             <LayerGroup>
