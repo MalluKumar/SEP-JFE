@@ -11,6 +11,7 @@ it('test correctly when Direction is rendered', () => {
     let arrivedAtJob = 0;
     let arrivedOnTime = 0;
     let timeOnJobs = 0;
+    let jobsCompleted = 0;
 
     const updatePath = (k: number, v: any) => {
         paths.set(k, v);
@@ -42,13 +43,16 @@ it('test correctly when Direction is rendered', () => {
         jobs[index] = job;
         jobData = jobs;
     }
-
+    const updateCompletedJobs = (numberOfJobs: number) => {
+        jobsCompleted += numberOfJobs;
+    }
     const functionObj: FunctionObj = {
         setComplianceRate: updateComplianceRate,
         setDistanceTravelled: updateDistance,
         setTimeOnJobs: updateTimeOnJobs,
         updateJob: updateJob,
-        updatePath: updatePath
+        updatePath: updatePath,
+        updateCompletedJobs:updateCompletedJobs,
     }
 
     const tree = render(<JobMap currentDateTime={currentDateTime} jobs={jobData} paths={paths} functions={functionObj} />);
