@@ -43,6 +43,7 @@ it('test correctly when Direction render', () => {
     let arrivedAtJob = 0;
     let arrivedOnTime = 0;
     let timeOnJobs = 0;
+    let jobsCompleted = 0;
 
     const updatePath = (k: number, v: any) => {
         paths.set(k, v);
@@ -75,6 +76,9 @@ it('test correctly when Direction render', () => {
         jobData = jobs;
     }
 
+    const updateCompletedJobs = (numberOfJobs: number) => {
+        jobsCompleted += numberOfJobs;
+    }
     function name() {
         let currentJob: JobData = {
             JobID: 401620585,
@@ -115,7 +119,8 @@ it('test correctly when Direction render', () => {
         setDistanceTravelled: updateDistance,
         setTimeOnJobs: updateTimeOnJobs,
         updateJob: updateJob,
-        updatePath: updatePath
+        updatePath: updatePath,
+        updateCompletedJobs:updateCompletedJobs,
     }
 
     const tree = render(<MapContainer><DirectionsRoute job={activejob()} currentDateTime={currentDateTime} functions={functionObj} /></MapContainer>);
