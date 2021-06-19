@@ -1,4 +1,30 @@
-# Getting Started with Create React App
+# Jemena FWO Front End
+This is a git repository created for the capstone project for Software Engineering Final Project at RMIT Semester 1 2021.
+The project aims to build a visual front end web application to analyse the simulation result based on the csv file generated from the backend. The csv file outputted from the backend is manually added to the ‘public’ folder of the application code as there is not direct interlink between the backend and front-end for now.  D3 is used for reading input file once after the program runs and all the data is stored in a list and passed as props to map component.
+
+The front-end web application will show the map of Sydney and its surrounding areas for 80% of the screen which is implemented in one component. The second component will contain a sidebar to show the date time, buttons for fast forwarding the time and other statistics which are calculated as the jobs are started and completed. The date time shown on the map is the oldest start time of a job which is in the csv. As the time ticks, the routes or movement of GST to a job location is shown on the map. Once the GST reaches the job location and starts working, distance travelled will be updated in the sidebar statistics. After the completion of the work, the work time is also updated in the sidebar. If the entire job duration exceeds the 30-minute cut-off time, then the compliance which is set to 100% is re-calculated and will be updated. The buttons on the sidebar can be used to fast forward the time. The same steps are followed until all the jobs in the csv are completed.
+
+## Setup
+The application was built using React and this needs to be installed in the machine, there is a guide link for create react installation:
+https://docs.microsoft.com/en-us/windows/dev-environment/javascript/react-on-windows
+The development team recommend to use Visual Studio Code for any further development. 
+The Visual Studio Code is available from the following link: https://code.visualstudio.com/Download
+
+All the external libraries are included in the package.json file. Before users try to run the project, they need to install all the libraries by type: npm install. The code can be cloned or downloaded in any editor of your choice. All the other required commands required to run the program are shown below.
+
+## Contributors
+This project is the intellectual Property of Jemena and all development work on this project should be conducted with their explicit consent. The students who contributed to this project were:
+
+* Mallu Malligere Kumar
+* Anshul Sharma
+* Kunal Pahuja
+* Ljubomir Antic (Julian)
+* Shengping Dai
+
+## Project Status
+Development of this project has currently ceased. The current project exists as a prototype for what a final shippable product may look like.
+
+# Other useful commands for React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
